@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MonedaConvert.Models.Enum;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MonedaConvert.Entities
@@ -14,6 +15,8 @@ namespace MonedaConvert.Entities
         [Required]
         public string? UserName { get; set; }
         public List<Currency>? Coins { get; set; }
+        public State State { get; set; }
+        public Role Role { get; set; }
 
     }
 }

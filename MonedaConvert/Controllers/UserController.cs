@@ -1,12 +1,100 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using MonedaConvert.Entities;
+using MonedaConvert.Models.Dtos;
+using MonedaConvert.Services.Interfaces;
 
 namespace MonedaConvert.Controllers
 {
-    public class UserController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize]
+    public class UserController : ControllerBase
     {
-        public IActionResult Index()
+        //Leer los metodos que corresponden al CRUD del usuario
+        private readonly IUserService _userService;
+        public UserController(IUserService userRepository)
         {
-            return View();
+            _userService = userRepository;
+        }
+
+        //Traemos todos los usuarios
+        [HttpGet]
+        public ActionResult<UserDto> GetAll()
+        {
+            return Ok(_userService.GetAll());
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetOneById(int id) 
+        {
+            if (id == 0)
+            {
+                return BadRequest("El ID ingresado debe ser distinto de 0");
+            }
+
+            GetUserByIdDto? user = _userService.GetById(id);
+            //Creo un objeto user con todas las porpiedades de UserByDto y solo le pido el Id
+
+
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+            //Si no existe, devuelve NotFound, sino devuele el usuario
+        }
+
+        [HttpPost]
+        [AllowAnonymous] //Esto lo agregamos porque en nuestro caso el create user lo vamos a usar para el registro (queremos saltear la autenticación)
+        public IActionResult CreateUser(CreateAndUpdateUserDto dto)
+        {
+            try
+            {
+                _userService.Create(dto);
+            }
+            //Se crea el usuario con el metodo Create()
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+            //Aca contemplamos el error en el caso de que ya exista ese usuario
+            return Created("Created", dto);
+        }
+
+        [HttpPut("{userId}")]
+        public IActionResult UpdateUser(CreateAndUpdateUserDto dto, int userId)
+        {
+            if (!_userService.CheckIfUserExists(userId))
+            {
+                return NotFound();
+            }
+            try
+            {
+                _userService.Update(dto, userId);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+            return NoContent();
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteUser(int id) 
+        {
+            try
+            {
+                _userService.RemoveUser(id);
+            }
+            catch (Exception ex)
+            {
+                BadRequest(ex);
+            }
+
+            return NoContent();
         }
     }
+
 }

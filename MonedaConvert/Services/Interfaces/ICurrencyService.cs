@@ -1,5 +1,6 @@
 ﻿using MonedaConvert.Models.Dtos;
 
+
 namespace MonedaConvert.Services.Interfaces
 {
     public interface ICurrencyService

@@ -8,19 +8,19 @@ namespace MonedaConvert.Services.Implementations
 {
     public class CurrencyService : ICurrencyService
     {
-        private readonly MonedaContext _context;
+        //private readonly MonedaContext _context;
 
-        public CurrencyService(MonedaContext context)
-        {
-            _context = context;
-        }
+        //public CurrencyService(MonedaContext context)
+        //{
+        //    _context = context;
+        //}
 
-        public List<CurrencyDto> GetAllCoins(int id)
-        {
-            return _context.Currency.Include(x => x.User).Where(x.User.Id == id).Select(currency => new CurrencyDto()
-            {
+        //public List<CurrencyDto> GetAllCoins(int id)
+        //{
+        //    return _context.Currency.Include(x => x.User).Where(x.User.Id == id).Select(currency => new CurrencyDto()
+        //    {
 
-            })
-        }
+        //    })
+        //}
     }
 }

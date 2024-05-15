@@ -15,8 +15,8 @@ namespace MonedaConvert.Entities
         [Required]
         public string? UserName { get; set; }
         public List<Currency>? Coins { get; set; }
-        public State State { get; set; }
-        public Role Role { get; set; }
+        public State State { get; set; } = State.Active;
+        public Role Role { get; set; } = Role.User;
 
     }
 }

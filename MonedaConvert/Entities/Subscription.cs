@@ -1,10 +1,16 @@
-﻿namespace MonedaConvert.Entities
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MonedaConvert.Entities
 {
     public class Subscription
     {
-        public string Name { get; set; }    
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
-        public int Price { get; set; }  
+        public int Id { get; set; } 
+
+        public string Name { get; set; }    
 
         public int Tries { get; set; }
     }

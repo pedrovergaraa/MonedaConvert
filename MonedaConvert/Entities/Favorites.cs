@@ -1,8 +1,17 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class Class1
+namespace MonedaConvert.Entities
 {
-	public Class1()
-	{
-	}
+    public class Favorites
+    {
+        [ForeignKey("UserId")]
+        public int userId { get; set; }
+        public User user { get; set; }
+        [ForeignKey("CurrencyId")]
+        public int currencyId { get; set; }
+        public Currency currency { get; set; }
+
+    }
 }
+

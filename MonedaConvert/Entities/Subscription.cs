@@ -10,8 +10,10 @@ namespace MonedaConvert.Entities
 
         public int Id { get; set; } 
 
-        public string Name { get; set; }    
+        public string Name { get; set; }  
+        //Free, Trial, Pro
 
         public int Tries { get; set; }
+        //Los tries son para la sub free, maximo 10
     }
 }

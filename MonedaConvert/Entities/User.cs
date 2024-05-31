@@ -11,11 +11,14 @@ namespace MonedaConvert.Entities
         public int Id { get; set; }
         public string? Email { get; set; }
         public string? Password { get; set; }
-        public List<Currency>? Coins { get; set; }
+
+        public List<UserCurrency>? UserCurrency { get; set; } = new List<UserCurrency> { };
+        public List<Favorites>? Favorites { get; set; } = new List<Favorites> { };
+
         public State State { get; set; } = State.Active;
         public Role Role { get; set; } = Role.User;
-        [ForeignKey("SuscripcionId")]
-        public Suscription Sub { get; set; }
-        public int SuscripcionId { get; set; }
+        [ForeignKey("SubscriptionId")]
+        public Subscription Sub { get; set; }
+        public int SubscriptionId { get; set; }
     }
 }

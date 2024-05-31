@@ -8,8 +8,9 @@ namespace MonedaConvert.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
-        public string? Name { get; set; }
-        //Nombre de la moneda cortito, USD, EUR, et
+
+        public string? Legend { get; set; }
+
         public string? Symbol { get; set; }
         //Simbolo grafico
         public decimal? IC { get; set; }
@@ -17,11 +18,9 @@ namespace MonedaConvert.Entities
         //El índice de convertibilidad será la
         //relación que existe entre una moneda y el dólar americano expresada en cuanto vale
         //una unidad de dicha moneda en comparación a 1 usd.
-        public int? Value { get; set; }
-        //Valor de la moneda
-        [ForeignKey("UserId")]
-        public User User { get; set; }
-        public int UserId { get; set; }
+        public List<UserCurrency>? UserCurrency { get; set; } = new List<UserCurrency> { };
+
+        public List<Favorites>? Favorites { get; set; } = new List<Favorites> { };
 
     }
 }

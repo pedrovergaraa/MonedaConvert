@@ -7,7 +7,7 @@ namespace MonedaConvert.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string? Id { get; set; }
+        public int? Id { get; set; }
 
         public string? Legend { get; set; }
 

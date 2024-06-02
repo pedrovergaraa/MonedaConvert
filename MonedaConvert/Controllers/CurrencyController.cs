@@ -22,8 +22,8 @@ namespace MonedaConvert.Controllers
         }
         [HttpGet]
         public IActionResult GetAll() 
-        { 
-            int currencyId
+        {
+            int currencyId;
         }
 
 

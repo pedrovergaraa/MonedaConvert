@@ -35,8 +35,10 @@ builder.Services.AddSwaggerGen(setupAction =>
                 }, new List<string>() }
     });
 });
-builder.Services.AddDbContext<MonedaContext>(dbContextOptions => dbContextOptions.UseSqlite(
-    builder.Configuration["ConnectionStrings:AgendaAPIDBConnectionString"]));
+builder.Services.AddDbContext<MonedaContext>(options =>
+{
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 builder.Services.AddAuthentication("Bearer") //"Bearer" es el tipo de auntenticación que tenemos que elegir después en PostMan para pasarle el token
     .AddJwtBearer(options => //Acá definimos la configuración de la autenticación. le decimos qué cosas queremos comprobar. La fecha de expiración se valida por defecto.

@@ -6,10 +6,10 @@ namespace MonedaConvert.Entities
     public class Favorites
     {
         [ForeignKey("UserId")]
-        public int userId { get; set; }
+        public int UserId { get; set; }
         public User User { get; set; }
         [ForeignKey("CurrencyId")]
-        public int currencyId { get; set; }
+        public int CurrencyId { get; set; }
         public Currency Currency { get; set; }
 
     }

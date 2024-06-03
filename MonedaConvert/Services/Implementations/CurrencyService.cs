@@ -1,8 +1,8 @@
-﻿//using MonedaConvert.Data;
-//using MonedaConvert.Entities;
-//using MonedaConvert.Models.Dtos;
-//using MonedaConvert.Services.Interfaces;
-//using System.Globalization;
+﻿using MonedaConvert.Data;
+using MonedaConvert.Entities;
+using MonedaConvert.Models.Dtos;
+using MonedaConvert.Services.Interfaces;
+using System.Globalization;
 
 
 namespace MonedaConvert.Services.Implementations
@@ -15,32 +15,30 @@ namespace MonedaConvert.Services.Implementations
         {
             _context = context;
         }
-        // Otros métodos de la clase
-        // Otros métodos de la clase
 
-    //    public void CreateCoin(CreateAndUpdateUserDto userDto, int currencyId)
-    //    {
-    //        // Implementación del método
-    //    }
+        public void CreateCoin(CreateAndUpdateUserDto userDto, int currencyId)
+        {
+            // Implementación del método
+        }
 
-    //    public List<UserCurrency> GetAllByUser(int userId)
-    //    {
-    //        // Implementación del método
-    //    }
+        public List<UserCurrency> GetAllByUser(int userId)
+        {
+            // Implementación del método
+        }
 
-    //    public Currency GetById(int userId, int currencyId)
-    //    {
-    //        // Implementación del método
-    //    }
+        public Currency GetById(int userId, int currencyId)
+        {
+            // Implementación del método
+        }
 
-    //    public void RemoveCoin(int currencyId)
-    //    {
-    //        // Implementación del método
-    //    }
+        public void RemoveCoin(int currencyId)
+        {
+            // Implementación del método
+        }
 
-    //    public void UpdateCoin(CreateAndUpdateCurrencyDto currencyDto, int coinId)
-    //    {
-    //        // Implementación del método
-    //    }
+        public void UpdateCoin(CreateAndUpdateCurrencyDto currencyDto, int coinId)
+        {
+            // Implementación del método
+        }
     }
 }

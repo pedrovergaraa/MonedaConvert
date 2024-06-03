@@ -15,27 +15,33 @@ namespace MonedaConvert.Services.Implementations
         {
             _context = context;
         }
-
-        public void CreateCoin(CreateAndUpdateUserDto userDto, int currencyId)
+        //Boton de crear moneda
+        public void CreateCoin(CreateAndUpdateCurrencyDto dto, int currencyId)
         {
             // Implementación del método
+            Currency newCurrency = new Currency()
+            {
+                Symbol = dto.Symbol,
+                Legend = dto.Legend,
+                IC = dto.IC
+            };
+            _context.Coins.Add(newCurrency);
+            _context.SaveChanges();
         }
+        //Lista de monedas para que el usuario pueda elegir
+        //public List<UserCurrency> GetAllByUser(int userId)
+        //{
+        //    // Implementación del método
+        //}
 
-        public List<UserCurrency> GetAllByUser(int userId)
-        {
-            // Implementación del método
-        }
-
-        public Currency GetById(int userId, int currencyId)
-        {
-            // Implementación del método
-        }
 
         public void RemoveCoin(int currencyId)
         {
+            _context.UserCurrency.Remove(_context.UserCurrency.Single(c => c.Id == currencyId));
+            _context.SaveChanges();
             // Implementación del método
         }
-
+        //Editar moneda
         public void UpdateCoin(CreateAndUpdateCurrencyDto currencyDto, int coinId)
         {
             // Implementación del método

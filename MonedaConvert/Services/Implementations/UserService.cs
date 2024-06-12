@@ -26,11 +26,14 @@ namespace MonedaConvert.Services.Implementations
                 Name = dto.Name,
                 Email = dto.Email,
                 Password = dto.Password,
-                Suscription = Suscription.Free,
+                Subscription = Subscription.Free,
                 totalConvertions = 10
+                UserCurrencies = new List<UserCurrency>(),
+                ConversionHistories = new List<Conversion>()
             };
             _context.Users.Add(newUser);
             _context.SaveChanges();
+            return newUser;
         }
 
         //Ver si esta logueado
@@ -39,6 +42,28 @@ namespace MonedaConvert.Services.Implementations
             return _context.Users.FirstOrDefault(p => p.Email == authRequestBody.Email && p.Password == authRequestBody.Password);
         }
 
+        public void DeleteUser(int userId)
+        {
+            _context.Users.Delete(userId);
+        }
+
+        public void AddFavoriteCurrency(int userId, string currencyId)
+        {
+            var user = _context.GetById(userId);
+            var currency = _context.GetById(currencyId);
+            if (user != null && currency != null)
+            {
+                if (!user.UserCurrencies.Any(fc => fc.CurrencyId == currencyId))
+                {
+                    user.UserCurrencies.Add(new UserCurrency { UserId = userId, CurrencyId = currencyId });
+                    _userRepository.Update(user);
+                }
+            }
+            else
+            {
+                throw new Exception("User or Currency not found");
+            }
+        }
     }
 }
 

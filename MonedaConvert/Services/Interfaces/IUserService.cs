@@ -5,7 +5,12 @@ namespace MonedaConvert.Services.Interfaces
 {
     public interface IUserService
     {
+        User GetById(int id);
         void Create(CreateAndUpdateUserDto dto);
-        User? ValidateUser(AuthenticationRequestDto authRequestBody);
+        bool ValidateUser(AuthenticationRequestDto authRequestBody);
+        void DeleteUser(int userId);
+        void AddFavoriteCurrency(int userId, string currencyCode);
+        void RemoveFavoriteCurrency(int userId, string currencyCode);
+        decimal ConvertCurrency(int userId, string fromCurrencyCode, string toCurrencyCode, decimal amount);
     }
 }

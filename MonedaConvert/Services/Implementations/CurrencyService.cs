@@ -1,4 +1,5 @@
-﻿using MonedaConvert.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using MonedaConvert.Data;
 using MonedaConvert.Entities;
 using MonedaConvert.Models.Dtos;
 using MonedaConvert.Services.Interfaces;
@@ -15,8 +16,24 @@ namespace MonedaConvert.Services.Implementations
         {
             _context = context;
         }
+        public List<Currency> GetAllByUser(int id) 
+        {
+            return _context.Currencies.Include(c => c.User).Where(c => c.User.Id == id).Select(currency => new CurrencyDto()
+            {
+                Id = currency.Id,
+                Legend = currency.Legend,
+                Symbol = currency.Symbol,
+                IC = currency.IC
+            }).ToList();
+
+        }
+
         //Boton de crear moneda
+<<<<<<< HEAD
         public void CreateCurrency(CreateAndUpdateCurrencyDto dto, int currencyId)
+=======
+        public void CreateCurrency(CreateAndUpdateCurrencyDto dto, int loggedUserId)
+>>>>>>> e2bdb655fa3a6cb462f9a5ff3f22a671aaf579f8
         {
             // Implementación del método
             Currency newCurrency = new Currency()
@@ -25,7 +42,7 @@ namespace MonedaConvert.Services.Implementations
                 Legend = dto.Legend,
                 IC = dto.IC
             };
-            _context.Coins.Add(newCurrency);
+            _context.Currencies.Add(newCurrency);
             _context.SaveChanges();
         }
         //Lista de monedas para que el usuario pueda elegir
@@ -37,7 +54,7 @@ namespace MonedaConvert.Services.Implementations
 
         public void RemoveCurrency(int currencyId)
         {
-            _context.UserCurrency.Remove(_context.UserCurrency.Single(c => c.Id == currencyId));
+            _context.Currencies.Remove(_context.Currencies.Single(c => c.Id == currencyId));
             _context.SaveChanges();
             // Implementación del método
         }
@@ -46,5 +63,10 @@ namespace MonedaConvert.Services.Implementations
         {
             // Implementación del método
         }
+
+        //void AddFavoriteCurrency(int userId, string currencyCode);
+        //void RemoveFavoriteCurrency(int userId, string currencyCode);
+        //decimal ConvertCurrency(int userId, string fromCurrencyCode, string toCurrencyCode, decimal amount);
+
     }
 }

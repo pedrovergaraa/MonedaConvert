@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using MonedaConvert.Entities;
 using MonedaConvert.Models.Dtos;
 using MonedaConvert.Data;
+using MonedaConvert.Models.Enum;
+using MonedaConvert.Services.Interfaces;
 
 namespace MonedaConvert.Services.Implementations
 {
@@ -21,48 +23,33 @@ namespace MonedaConvert.Services.Implementations
         public void Create(CreateAndUpdateUserDto dto)
         {
             // Aquí podrías realizar validaciones de DTO si es necesario
-            var newUser = new User
+            var newUser = new User()
             {
-                Name = dto.Name,
                 Email = dto.Email,
                 Password = dto.Password,
                 Subscription = Subscription.Free,
+<<<<<<< HEAD
                 totalConvertions = 10,
                 UserCurrencies = new List<UserCurrency>(),
+=======
+                Currencies = new List<Currency>(),
+>>>>>>> e2bdb655fa3a6cb462f9a5ff3f22a671aaf579f8
                 ConversionHistories = new List<Conversion>()
             };
             _context.Users.Add(newUser);
             _context.SaveChanges();
-            return newUser;
         }
 
         //Ver si esta logueado
-        public User? ValidateUser(AuthenticationRequestDto authRequestBody)
+        public User? ValidateUser(AuthenticationRequestDto request)
         {
-            return _context.Users.FirstOrDefault(p => p.Email == authRequestBody.Email && p.Password == authRequestBody.Password);
+            return _context.Users.FirstOrDefault(p => p.Email == request.Email && p.Password == request.Password);
         }
 
-        public void DeleteUser(int userId)
-        {
-            _context.Users.Delete(userId);
-        }
 
         public void AddFavoriteCurrency(int userId, string currencyId)
         {
-            var user = _context.GetById(userId);
-            var currency = _context.GetById(currencyId);
-            if (user != null && currency != null)
-            {
-                if (!user.UserCurrencies.Any(fc => fc.CurrencyId == currencyId))
-                {
-                    user.UserCurrencies.Add(new UserCurrency { UserId = userId, CurrencyId = currencyId });
-                    _userRepository.Update(user);
-                }
-            }
-            else
-            {
-                throw new Exception("User or Currency not found");
-            }
+            //Implementacion del codigo
         }
     }
 }

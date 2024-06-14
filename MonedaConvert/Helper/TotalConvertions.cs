@@ -1,5 +1,4 @@
-﻿using MonedaConvert.Entities;
-using MonedaConvert.Models.Enum;
+﻿using MonedaConvert.Models.Enum;
 
 namespace MonedaConvert.Helper
 {

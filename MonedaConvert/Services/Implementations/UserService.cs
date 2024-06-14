@@ -27,7 +27,7 @@ namespace MonedaConvert.Services.Implementations
                 Email = dto.Email,
                 Password = dto.Password,
                 Subscription = Subscription.Free,
-                totalConvertions = 10
+                totalConvertions = 10,
                 UserCurrencies = new List<UserCurrency>(),
                 ConversionHistories = new List<Conversion>()
             };

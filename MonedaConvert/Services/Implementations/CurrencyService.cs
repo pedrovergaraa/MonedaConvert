@@ -16,7 +16,7 @@ namespace MonedaConvert.Services.Implementations
             _context = context;
         }
         //Boton de crear moneda
-        public void CreateCoin(CreateAndUpdateCurrencyDto dto, int currencyId)
+        public void CreateCurrency(CreateAndUpdateCurrencyDto dto, int currencyId)
         {
             // Implementación del método
             Currency newCurrency = new Currency()
@@ -35,14 +35,14 @@ namespace MonedaConvert.Services.Implementations
         //}
 
 
-        public void RemoveCoin(int currencyId)
+        public void RemoveCurrency(int currencyId)
         {
             _context.UserCurrency.Remove(_context.UserCurrency.Single(c => c.Id == currencyId));
             _context.SaveChanges();
             // Implementación del método
         }
         //Editar moneda
-        public void UpdateCoin(CreateAndUpdateCurrencyDto currencyDto, int coinId)
+        public void UpdateCurrency(CreateAndUpdateCurrencyDto currencyDto, int coinId)
         {
             // Implementación del método
         }

@@ -9,16 +9,15 @@ namespace MonedaConvert.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string? Email { get; set; }
-        public string? Password { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
         public int totalConversions { get; set; }
         public Subscription Subscription { get; set; }
 
-        public List<UserCurrency> UserCurrencies { get; set; }
-        public List<Conversion> ConversionHistories { get; set; }
+        public List<Currency>? Currencies { get; set; }
+        public List<Conversion>? ConversionHistories { get; set; }
 
-        public State State { get; set; } = State.Active;
-        public Role Role { get; set; } = Role.User;
+        
     }
 }
 

@@ -1,12 +1,13 @@
-﻿namespace MonedaConvert.Models.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MonedaConvert.Models.Dtos
 {
     public class CurrencyDto
     {
         public int Id { get; set; } 
 
-        public string? Name { get; set; }
-
-        public decimal? Value { get; set; }
+        public string? Legend { get; set; }
 
         public string? Symbol { get; set; }
 

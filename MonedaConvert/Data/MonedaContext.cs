@@ -10,8 +10,7 @@ namespace MonedaConvert.Data
 
         }
         public DbSet<User>Users { get; set; }
-        public DbSet<Currency> Coins { get; set; }
-        public DbSet<UserCurrency> UserCurrency { get; set; }   
+        public DbSet<Currency> Currencies { get; set; }
         public DbSet<Conversion> ConversionHistories { get; set; }
 
 

@@ -46,6 +46,29 @@ namespace MonedaConvert.Services.Implementations
         public void AddFavoriteCurrency(int userId, string currencyId)
         {
             //Implementacion del codigo
+            // Buscar el usuario por su ID
+            var user = _context.Users.Include(u => u.Currencies).FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new Exception("Usuario no encontrado");
+            }
+
+            // Buscar la moneda por su ID
+            var currency = _context.Currencies.FirstOrDefault(c => c.Id == currencyId);
+            if (currency == null)
+            {
+                throw new Exception("Moneda no encontrada");
+            }
+
+            // Verificar si la moneda ya está en la lista de monedas favoritas del usuario
+            if (user.Currencies.Any(c => c.Id == currencyId))
+            {
+                throw new Exception("La moneda ya está en la lista de monedas favoritas del usuario");
+            }
+
+            // Agregar la moneda a la lista de monedas favoritas del usuario
+            user.Currencies.Add(currency);
+            _context.SaveChanges();
         }
     }
 }

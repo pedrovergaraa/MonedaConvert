@@ -29,11 +29,9 @@ namespace MonedaConvert.Services.Implementations
         }
 
         //Boton de crear moneda
-<<<<<<< HEAD
-        public void CreateCurrency(CreateAndUpdateCurrencyDto dto, int currencyId)
-=======
+
         public void CreateCurrency(CreateAndUpdateCurrencyDto dto, int loggedUserId)
->>>>>>> e2bdb655fa3a6cb462f9a5ff3f22a671aaf579f8
+
         {
             // Implementación del método
             Currency newCurrency = new Currency()

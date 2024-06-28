@@ -28,12 +28,8 @@ namespace MonedaConvert.Services.Implementations
                 Email = dto.Email,
                 Password = dto.Password,
                 Subscription = Subscription.Free,
-<<<<<<< HEAD
                 totalConvertions = 10,
-                UserCurrencies = new List<UserCurrency>(),
-=======
                 Currencies = new List<Currency>(),
->>>>>>> e2bdb655fa3a6cb462f9a5ff3f22a671aaf579f8
                 ConversionHistories = new List<Conversion>()
             };
             _context.Users.Add(newUser);

@@ -11,10 +11,8 @@ namespace MonedaConvert.Services.Interfaces
         CurrencyDto? GetById(int userId, int currencyId);
         void RemoveCurrency(int id);
         void UpdateCurrency(CreateAndUpdateCurrencyDto dto, int currencyId);
-<<<<<<< HEAD
         void AddFavoriteCurrency(CurrencyDto, int currencyId);
-=======
-        void AddFavoriteCurrency(AddFavoriteCurrencyDto dto, int currencyId);
->>>>>>> e2bdb655fa3a6cb462f9a5ff3f22a671aaf579f8
+
+        void AddFavoriteCurrency(CurrencyDto dto, int currencyId)
     }
 }

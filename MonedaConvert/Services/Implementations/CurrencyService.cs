@@ -38,7 +38,8 @@ namespace MonedaConvert.Services.Implementations
             {
                 Symbol = dto.Symbol,
                 Legend = dto.Legend,
-                IC = dto.IC
+                IC = dto.IC,
+                UserId = loggedUserId
             };
             _context.Currencies.Add(newCurrency);
             _context.SaveChanges();

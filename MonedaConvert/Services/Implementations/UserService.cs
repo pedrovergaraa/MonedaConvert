@@ -26,11 +26,7 @@ namespace MonedaConvert.Services.Implementations
             var newUser = new User()
             {
                 Email = dto.Email,
-                Password = dto.Password,
-                Subscription = Subscription.Free,
-                totalConvertions = 10,
-                Currencies = new List<Currency>(),
-                ConversionHistories = new List<Conversion>()
+                Password = dto.Password
             };
             _context.Users.Add(newUser);
             _context.SaveChanges();

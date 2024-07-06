@@ -1,4 +1,5 @@
-﻿using MonedaConvert.Models.Dtos;
+﻿using MonedaConvert.Entities;
+using MonedaConvert.Models.Dtos;
 
 
 namespace MonedaConvert.Services.Interfaces
@@ -10,12 +11,14 @@ namespace MonedaConvert.Services.Interfaces
 
         List<CurrencyDto> GetAllByUser(int id);
 
-        CurrencyDto? GetById(int userId, int currencyId);
+        CurrencyDto GetById(int userId, int currencyId);
 
         void RemoveCurrency(int id);
 
         void UpdateCurrency(CreateAndUpdateCurrencyDto dto, int currencyId);
 
-        void AddFavoriteCurrency(CurrencyDto dto, int currencyId);
+        bool CheckIfCurrencyExists(int currencyId);
+
+        float Convert(Currency FromCurrency, Currency ToCurrency, float amount, int userId)
     }
 }

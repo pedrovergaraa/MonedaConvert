@@ -1,5 +1,4 @@
-﻿using MonedaConvert.Models.Enum;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MonedaConvert.Entities
@@ -11,14 +10,14 @@ namespace MonedaConvert.Entities
 
         public int UserId { get; set; }
 
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         public int totalConversions { get; set; } = 0;
         
         [ForeignKey("SubscriptionId")]
-        public Subscription Subscription { get; set; }
+        public Subscription? Subscription { get; set; }
 
         public int SubscriptionId { get; set; } = 1;
 

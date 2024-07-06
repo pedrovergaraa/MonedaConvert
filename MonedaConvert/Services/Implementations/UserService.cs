@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using MonedaConvert.Entities;
 using MonedaConvert.Models.Dtos;
 using MonedaConvert.Data;
-using MonedaConvert.Models.Enum;
 using MonedaConvert.Services.Interfaces;
 
 namespace MonedaConvert.Services.Implementations

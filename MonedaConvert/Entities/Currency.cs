@@ -17,7 +17,7 @@ namespace MonedaConvert.Entities
         [Required]
         [ForeignKey("UserId")]
         public User? User { get; set; }
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
 
     }
 }

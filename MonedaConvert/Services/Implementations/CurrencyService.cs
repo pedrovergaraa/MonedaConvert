@@ -38,7 +38,7 @@ namespace MonedaConvert.Services.Implementations
 
             return 0;
         }
-        
+
         public void CreateCurrency(CreateAndUpdateCurrencyDto dto, int userId)
 
         {
@@ -80,9 +80,10 @@ namespace MonedaConvert.Services.Implementations
         public void UpdateCurrency(CreateAndUpdateCurrencyDto dto, int currencyId)
         {
             Currency currencyToUpdate = _context.Currency.First(u => u.CurrencyId == currencyId);
-            currencyToUpdate.legend = dto.legend;
-            currencyToUpdate.symbol = dto.symbol;
+            currencyToUpdate.Legend = dto.Legend;
+            currencyToUpdate.Symbol = dto.Symbol;
             currencyToUpdate.IC = dto.IC;
             _context.SaveChanges();
-        }    
+        }
+    }
 }

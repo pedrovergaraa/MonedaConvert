@@ -7,11 +7,11 @@ namespace MonedaConvert.Services.Interfaces
     public interface ICurrencyService
     {
         //Le paso 2 parametros a los metodos porque cada usuario tiene sus propias monedas
-        void CreateCurrency(CreateAndUpdateUserDto dto, int loggedUserId);
+        void CreateCurrency(CreateAndUpdateCurrencyDto dto, int userId);
 
-        List<CurrencyDto> GetAllByUser(int id);
+        List<Currency> GetAllCurrencies(int userId);
 
-        CurrencyDto GetById(int userId, int currencyId);
+        Currency GetById(int currencyId);
 
         void RemoveCurrency(int id);
 
@@ -19,6 +19,6 @@ namespace MonedaConvert.Services.Interfaces
 
         bool CheckIfCurrencyExists(int currencyId);
 
-        float Convert(Currency FromCurrency, Currency ToCurrency, float amount, int userId)
+        float Convert(Currency FromCurrency, Currency ToCurrency, float amount, int userId);
     }
 }

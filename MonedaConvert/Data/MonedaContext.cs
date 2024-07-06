@@ -10,53 +10,55 @@ namespace MonedaConvert.Data
 
         }
         public DbSet<User>Users { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<Currency> Currencies { get; set; }
-        public DbSet<Conversion> ConversionHistories { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Currency pesoArgentino = new Currency
+            modelBuilder.Entity<User>()
+            .HasOne<Subscription>(u => u.Subscription).
+            WithMany(c => c.Users);
+
+            modelBuilder.Entity<Currency>()
+                .HasOne<User>(u => u.User)
+                .WithMany(c => c.Currencies);
+
+            Subscription sub1 = new Subscription()
             {
-                Id = 1,
-                Symbol = "Peso Argentino",
-                Legend = "ARS$",
-                IC = 0.002
-            };
-            Currency monedaAmericana = new Currency
-            {
-                Id = 2,
-                Symbol = "Dolar Americano",
-                Legend = "USD$",
-                IC = 1
-            };
-            Currency coronaCheca = new Currency
-            {
-                Id = 3,
-                Symbol = "Corona Checa",
-                Legend = "KC$",
-                IC = 0.043
-            };
-            Currency euro = new Currency
-            {
-                Id = 4,
-                Symbol = "Euro",
-                Legend = "EUR$",
-                IC = 1.09
-            };
-            Currency libra = new Currency
-            {
-                Id = 5,
-                Symbol = "Libra Esterlina",
-                Legend = "GBP$",
-                IC = 1.42
+                SubId = 1,
+                Name = "Free",
+                Convertions = 10,
+                Price = 0
+
             };
 
-            modelBuilder.Entity<Currency>().HasData(
-                pesoArgentino, monedaAmericana, coronaCheca, euro, libra);
 
-            base.OnModelCreating(modelBuilder);
+            Subscription sub2 = new Subscription()
+            {
+                SubId = 2,
+                Name = "Trial",
+                Convertions = 100,
+                Price = 7
+
+            };
+
+
+            Subscription sub3 = new Subscription()
+            {
+                SubId = 3,
+                Name = "Premium",
+                Convertions = 999999999999999999,
+                Price = 10
+
+            };
+
+            modelBuilder.Entity<Subscription>()
+             .HasData(sub1, sub2, sub3);
+
         }
+
+
 
     }
 }

@@ -16,19 +16,12 @@ namespace MonedaConvert.Services.Implementations
         {
             _context = context;
         }
-        public List<Currency> GetAllByUser(int id) 
+
+        public double Convert(User user, double amount, Conversion toConvert)
         {
-            return _context.Currencies.Include(c => c.User).Where(c => c.User.Id == id).Select(currency => new CurrencyDto()
-            {
-                Id = currency.Id,
-                Legend = currency.Legend,
-                Symbol = currency.Symbol,
-                IC = currency.IC
-            }).ToList();
-
+            double result = amount * toConvert.ICfromConvert / toConvert.ICtoConvert;
+            return result;
         }
-
-        //Boton de crear moneda
 
         public void CreateCurrency(CreateAndUpdateCurrencyDto dto, int loggedUserId)
 
@@ -41,9 +34,25 @@ namespace MonedaConvert.Services.Implementations
                 IC = dto.IC,
                 UserId = loggedUserId
             };
-            _context.Currencies.Add(newCurrency);
+            _context.Currency.Add(newCurrency);
             _context.SaveChanges();
         }
+
+        public List<Currency> GetAllByUser(int id) 
+        {
+            return _context.Currency.Include(c => c.User).Where(c => c.User.Id == id).Select(currency => new CurrencyDto()
+            {
+                Id = currency.Id,
+                Legend = currency.Legend,
+                Symbol = currency.Symbol,
+                IC = currency.IC
+            }).ToList();
+
+        }
+
+        //Boton de crear moneda
+
+        
         //Lista de monedas para que el usuario pueda elegir
         //public List<UserCurrency> GetAllByUser(int userId)
         //{
@@ -53,19 +62,71 @@ namespace MonedaConvert.Services.Implementations
 
         public void RemoveCurrency(int currencyId)
         {
-            _context.Currencies.Remove(_context.Currencies.Single(c => c.Id == currencyId));
+            _context.Currency.Remove(_context.Currencies.Single(c => c.Id == currencyId));
             _context.SaveChanges();
             // Implementación del método
         }
         //Editar moneda
-        public void UpdateCurrency(CreateAndUpdateCurrencyDto currencyDto, int coinId)
+        public void UpdateCurrency(string legend, CreateAndUpdateCurrencyDto dto, int currencyId)
         {
             // Implementación del método
+            Currency? coinToUpdate = _context.Currency.SingleOrDefault(c => c.Id == currencyId);
+            Currency? coinFavToUpdate = _context.Currency.SingleOrDefault(f => f.Legend == legend);
+
+            if (coinToUpdate is not null)
+            {
+                //edit user coin 
+                coinToUpdate.Legend = dto.Legend;
+                coinToUpdate.Symbol = dto.Symbol;
+                coinToUpdate.IC = dto.IC;
+
+                if (coinFavToUpdate is not null)
+                {
+                    //edit fav coin
+                    coinFavToUpdate.Legend = dto.Legend;
+                    coinFavToUpdate.Symbol = dto.Symbol;
+                    coinFavToUpdate.IC = dto.IC;
+                }
+                _context.SaveChanges();
+            }
+            else
+            {
+                Console.WriteLine("El Id no coincide");
+            }
         }
 
-        //void AddFavoriteCurrency(int userId, string currencyCode);
         //void RemoveFavoriteCurrency(int userId, string currencyCode);
         //decimal ConvertCurrency(int userId, string fromCurrencyCode, string toCurrencyCode, decimal amount);
+        public void AddFavoriteCurrency(int loggedUserId, CurrencyDto dto)
+        {
+            List<Currency> coins = _context.Currency.Where(u => u.Id == loggedUserId).ToList();
 
-    }
+            bool favCoin = false;
+
+            foreach (Currency favCoin in coins)
+            {
+                if (dto.Leyenda == currency.Legend)
+                {
+                    favCoin = true;
+                    break;
+                }
+            }
+
+            if (favCoin == false)
+            {
+                Currency newFav = new Currency()
+                {
+                    Legend = dto.Legend,
+                    Symbol = dto.Symbol,
+                    IC = dto.IC,
+                    userId = loggedUserId
+                };
+                _context.Currency.Add(newFav);
+                _context.SaveChanges();
+            }
+            else
+            {
+                Console.WriteLine("Esa moneda ya esta en favoritos");
+            }
+        }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using CurrencyConvert.Models.Dtos;
-using CurrencyConvert.Services.Interfaces;
+using CurrencyConvert.Services.Implementations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -13,9 +13,9 @@ namespace CurrencyConvert.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IConfiguration _config;
-        private readonly IUserService _userService;
+        private readonly UserService _userService;
 
-        public AuthenticationController(IConfiguration config, IUserService userService)
+        public AuthenticationController(IConfiguration config, UserService userService)
         {
             _config = config;
             _userService = userService;

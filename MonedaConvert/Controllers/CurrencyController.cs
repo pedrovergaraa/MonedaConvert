@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
-
 namespace CurrencyConvert.Controllers
 {
     [Route("api/[controller]")]
@@ -24,16 +23,16 @@ namespace CurrencyConvert.Controllers
         }
 
         [HttpGet("Convert")]
-        public IActionResult Convert([FromQuery] double amount, [FromQuery] ConversionDto toConvert)
+        public IActionResult Convert([FromQuery] decimal amount, [FromQuery] ConversionDto toConvert)
         {
             int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier")).Value);
-            User? user = _context.Users.SingleOrDefault(u => u.Id == userId);
+            User user = _context.Users.SingleOrDefault(u => u.Id == userId);
 
             if (user.TotalConversions != 0)
             {
                 try
                 {
-                    double result = _currencyService.Convert(user, amount, toConvert);
+                    decimal result = _currencyService.ConvertCurrency(user, amount, toConvert);
                     user.TotalConversions -= 1;
                     _context.SaveChanges();
                     return Ok(result);
@@ -45,7 +44,7 @@ namespace CurrencyConvert.Controllers
             }
             else
             {
-                double result = -1;
+                decimal result = -1;
                 return Ok(result);
             }
         }

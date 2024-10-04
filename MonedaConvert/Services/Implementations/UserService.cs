@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using CurrencyConvert.Entities;
 using CurrencyConvert.Models.Dtos;
 using CurrencyConvert.Data;
-using CurrencyConvert.Services.Interfaces;
 
 namespace CurrencyConvert.Services.Implementations
 {
-    public class UserService : IUserService
+    public class UserService 
     {
         private readonly CurrencyContext _context; // Dependiendo de cómo tengas configurado tu contexto de base de datos
 
@@ -32,7 +31,7 @@ namespace CurrencyConvert.Services.Implementations
         }
 
         // Validación del usuario para el login
-        public User? ValidateUser(AuthenticationRequestDto authenticationRequest)
+        public User ValidateUser(AuthenticationRequestDto authenticationRequest)
         {
             // Buscamos al usuario por su email
             var user = _context.Users

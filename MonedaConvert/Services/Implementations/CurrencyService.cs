@@ -1,14 +1,12 @@
 ﻿using CurrencyConvert.Data;
 using CurrencyConvert.Entities;
 using CurrencyConvert.Models.Dtos;
-using CurrencyConvert.Data;
-using CurrencyConvert.Models.Dtos
 
 namespace CurrencyConvert.Services.Implementations
 {
     public class CurrencyService
     {
-        private readonly CurrencyConvertContext _context;
+        private readonly CurrencyContext _context;
 
         public CurrencyService(CurrencyContext context)
         {
@@ -105,7 +103,7 @@ namespace CurrencyConvert.Services.Implementations
             }
         }
 
-        public void DeleteFavoriteCurrency(int currencyId)
+        public void RemoveFavorite(int currencyId)
         {
             _context.FavoriteCurrencies.Remove(_context.FavoriteCurrencies.Single(c => c.Id == currencyId));
             _context.SaveChanges();

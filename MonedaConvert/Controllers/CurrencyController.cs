@@ -1,11 +1,13 @@
-﻿using ConversionDeMonedas.Data;
-using ConversionDeMonedas.Entities;
-using ConversionDeMonedas.Models.Dtos;
-using ConversionDeMonedas.Services.Implementations;
+﻿using CurrencyConvert.Data;
+using CurrencyConvert.Entities;
+using CurrencyConvert.Models.Dtos;
+using CurrencyConvert.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ConversionDeMonedas.Controllers
+
+
+namespace CurrencyConvert.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -13,16 +15,16 @@ namespace ConversionDeMonedas.Controllers
     public class CurrencyController : ControllerBase
     {
         private readonly CurrencyService _currencyService;
-        private readonly ConversionDeMonedasContext _context;
+        private readonly CurrencyContext _context;
 
-        public CurrencyController(CurrencyService currencyService, ConversionDeMonedasContext context)
+        public CurrencyController(CurrencyService currencyService, CurrencyContext context)
         {
             _currencyService = currencyService;
             _context = context;
         }
 
         [HttpGet("Convert")]
-        public IActionResult Convert([FromQuery] double amount, [FromQuery] ToConvert toConvert)
+        public IActionResult Convert([FromQuery] double amount, [FromQuery] ConversionDto toConvert)
         {
             int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier")).Value);
             User? user = _context.Users.SingleOrDefault(u => u.Id == userId);
@@ -92,7 +94,7 @@ namespace ConversionDeMonedas.Controllers
         }
 
         [HttpPost("AddFavoriteCurrency")]
-        public IActionResult AddFavoriteCurrency(AddFavoriteCurrencyDto dto)
+        public IActionResult AddFavoriteCurrency(AddFavoriteDto dto)
         {
             int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier")).Value);
 
@@ -109,7 +111,7 @@ namespace ConversionDeMonedas.Controllers
         }
 
         [HttpDelete("RemoveFavoriteCurrency")]
-        public IActionResult RemoveFavoriteCurrency(int favoriteCurrencyId)
+        public IActionResult RemoveFavorite(int favoriteCurrencyId)
         {
             try
             {
@@ -123,5 +125,4 @@ namespace ConversionDeMonedas.Controllers
             return Ok("Favorite currency removed successfully.");
         }
     }
-}
 }

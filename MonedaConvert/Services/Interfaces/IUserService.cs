@@ -1,11 +1,11 @@
-﻿using MonedaConvert.Entities;
-using MonedaConvert.Models.Dtos;
+﻿using CurrencyConvert.Entities;
+using CurrencyConvert.Models.Dtos;
 
-namespace MonedaConvert.Services.Interfaces
+namespace CurrencyConvert.Services.Interfaces
 {
     public interface IUserService
     {
-        void Create(CreateAndUpdateUserDto dto);
-        User? ValidateUser(AuthenticationRequestDto request);
+        // Método para validar las credenciales del usuario
+        User? ValidateUser(AuthenticationRequestDto authenticationRequest);
     }
 }

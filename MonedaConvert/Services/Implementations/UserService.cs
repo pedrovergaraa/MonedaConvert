@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using MonedaConvert.Entities;
-using MonedaConvert.Models.Dtos;
-using MonedaConvert.Data;
-using MonedaConvert.Services.Interfaces;
+using CurrencyConvert.Entities;
+using CurrencyConvert.Models.Dtos;
+using CurrencyConvert.Data;
+using CurrencyConvert.Services.Interfaces;
 
-namespace MonedaConvert.Services.Implementations
+namespace CurrencyConvert.Services.Implementations
 {
     public class UserService : IUserService
     {
-        private readonly MonedaContext _context; // Dependiendo de cómo tengas configurado tu contexto de base de datos
+        private readonly CurrencyContext _context; // Dependiendo de cómo tengas configurado tu contexto de base de datos
 
-        public UserService(MonedaContext context)
+        public UserService(CurrencyContext context)
         {
             _context = context;
         }
@@ -31,10 +31,21 @@ namespace MonedaConvert.Services.Implementations
             _context.SaveChanges();
         }
 
-        //Ver si esta logueado
-        public User? ValidateUser(AuthenticationRequestDto request)
+        // Validación del usuario para el login
+        public User? ValidateUser(AuthenticationRequestDto authenticationRequest)
         {
-            return _context.Users.FirstOrDefault(p => p.Email == request.Email && p.Password == request.Password);
+            // Buscamos al usuario por su email
+            var user = _context.Users
+                .Include(u => u.Subscription) // Opcional: para incluir la información de suscripción
+                .FirstOrDefault(u => u.Email == authenticationRequest.Email);
+
+            // Si no encontramos al usuario o la contraseña no coincide
+            if (user == null || user.Password != authenticationRequest.Password) // Aquí comparamos las contraseñas
+            {
+                return null; // Si no es válido, devolvemos null
+            }
+
+            return user; // Si es válido, devolvemos el usuario
         }
 
     }

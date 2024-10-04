@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MonedaConvert.Models.Dtos
+namespace CurrencyConvert.Models.Dtos
 {
     public class AuthenticationRequestDto
     {

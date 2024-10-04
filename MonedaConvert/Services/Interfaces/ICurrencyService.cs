@@ -1,24 +1,24 @@
-﻿using MonedaConvert.Entities;
-using MonedaConvert.Models.Dtos;
+﻿using CurrencyConvert.Models;
+using CurrencyConvert.Models.Dtos;
+using CurrencyConvert.Entities;
+using System.Collections.Generic;
 
-
-namespace MonedaConvert.Services.Interfaces
+namespace CurrencyConvert.Services.Interfaces
 {
     public interface ICurrencyService
     {
-        //Le paso 2 parametros a los metodos porque cada usuario tiene sus propias monedas
-        void CreateCurrency(CreateAndUpdateCurrencyDto dto, int userId);
+        string ConvertCurrency(double amount, int fromCurrencyId, int toCurrencyId, User user);
 
-        List<Currency> GetAllCurrencies(int userId);
+        bool CreateCurrency(Currency currency);
 
-        Currency GetById(int currencyId);
+        bool EditCurrency(int currencyId, Currency updatedCurrency);
 
-        void RemoveCurrency(int id);
+        bool DeleteCurrency(int currencyId);
 
-        void UpdateCurrency(CreateAndUpdateCurrencyDto dto, int currencyId);
+        bool AddFavorite(int currencyId, int userId);
 
-        bool CheckIfCurrencyExists(int currencyId);
+        bool RemoveFavorite(int currencyId, int userId);
 
-        float Convert(Currency FromCurrency, Currency ToCurrency, float amount, int userId);
+        List<Currency> GetFavoriteCurrencies(int userId);
     }
 }

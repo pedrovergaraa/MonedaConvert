@@ -1,4 +1,4 @@
-﻿namespace MonedaConvert.Models.Dtos
+﻿namespace CurrencyConvert.Models.Dtos
 {
     public class ConversionDto
     {

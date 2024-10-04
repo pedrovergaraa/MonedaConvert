@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MonedaConvert.Data;
+using CurrencyConvert.Data;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -35,7 +35,7 @@ builder.Services.AddSwaggerGen(setupAction =>
                 }, new List<string>() }
     });
 });
-builder.Services.AddDbContext<MonedaContext>(options =>
+builder.Services.AddDbContext<CurrencyContext>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });

@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MonedaConvert.Entities;
+using CurrencyConvert.Entities;
 
-namespace MonedaConvert.Data
+namespace CurrencyConvert.Data
 {
-    public class MonedaContext : DbContext
+    public class CurrencyContext : DbContext
     {
-        public MonedaContext(DbContextOptions<MonedaContext> options) : base(options) //Acá estamos llamando al constructor de DbContext que es el que acepta las opciones
+        public CurrencyContext(DbContextOptions<CurrencyContext> options) : base(options) //Acá estamos llamando al constructor de DbContext que es el que acepta las opciones
         {
 
         }

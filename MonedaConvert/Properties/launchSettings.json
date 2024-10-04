@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "MonedaConvert": {
+    "CurrencyConvert": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

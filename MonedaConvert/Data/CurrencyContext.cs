@@ -1,4 +1,5 @@
 ﻿using CurrencyConvert.Entities;
+using Microsoft.EntityFrameworkCore
 
 namespace CurrencyConvert.Data
 {

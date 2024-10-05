@@ -23,16 +23,16 @@ namespace CurrencyConvert.Controllers
         }
 
         [HttpGet("Convert")]
-        public IActionResult Convert([FromQuery] decimal amount, [FromQuery] ConversionDto toConvert)
+        public IActionResult Convert([FromQuery] float amount, [FromQuery] ConversionDto toConvert)
         {
             int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier")).Value);
-            User user = _context.Users.SingleOrDefault(u => u.Id == userId);
+            User user = _context.Users.SingleOrDefault(u => u.UserId == userId);
 
             if (user.TotalConversions != 0)
             {
                 try
                 {
-                    decimal result = _currencyService.ConvertCurrency(user, amount, toConvert);
+                    float result = _currencyService.ConvertCurrency(user, amount, toConvert);
                     user.TotalConversions -= 1;
                     _context.SaveChanges();
                     return Ok(result);
@@ -44,7 +44,7 @@ namespace CurrencyConvert.Controllers
             }
             else
             {
-                decimal result = -1;
+                float result = -1;
                 return Ok(result);
             }
         }

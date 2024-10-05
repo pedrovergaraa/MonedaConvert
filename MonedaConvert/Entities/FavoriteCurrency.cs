@@ -9,14 +9,14 @@ namespace CurrencyConvert.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int FavoriteCurrencyId { get; set; }
 
-        public string Legend { get; set; }
+        public string? Legend { get; set; }
 
-        public string Symbol { get; set; }
+        public string? Symbol { get; set; }
 
-        public decimal IC { get; set; }
+        public float IC { get; set; }
 
         [ForeignKey("UserId")]
-        public User User { get; set; }
+        public User? User { get; set; }
 
         public int UserId { get; set; }
     }

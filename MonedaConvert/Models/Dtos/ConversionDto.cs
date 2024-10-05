@@ -2,10 +2,10 @@
 {
     public class ConversionDto
     {
-        public decimal? ICfromConvert { get; set; }
+        public float ICfromConvert { get; set; }
 
-        public decimal? ICtoConvert { get; set; }
+        public float ICtoConvert { get; set; }
 
-        public float? Amount { get; set; }   
+        public float Amount { get; set; }   
     }
 }

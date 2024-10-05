@@ -14,9 +14,9 @@ namespace CurrencyConvert.Services.Implementations
         }
 
         // Función para convertir moneda
-        public decimal ConvertCurrency(User user, decimal amount, ConversionDto toConvert)
+        public float ConvertCurrency(User user, float amount, ConversionDto toConvert)
         {
-            decimal result = amount * toConvert.ICfromConvert / toConvert.ICtoConvert;
+            float result = (amount * toConvert.ICfromConvert / toConvert.ICtoConvert);
             return result;
         }
 
@@ -27,7 +27,7 @@ namespace CurrencyConvert.Services.Implementations
             {
                 Legend = dto.Legend,
                 Symbol = dto.Symbol,
-                IC = (decimal)dto.IC,
+                IC = dto.IC,
                 UserId = loggedUserId
             };
             _context.Currencies.Add(newCurrency);
@@ -45,7 +45,7 @@ namespace CurrencyConvert.Services.Implementations
                 // Editar moneda del usuario
                 currencyToUpdate.Legend = dto.Legend;
                 currencyToUpdate.Symbol = dto.Symbol;
-                currencyToUpdate.IC = (decimal)dto.IC;
+                currencyToUpdate.IC = dto.IC;
 
                 if (favoriteCurrencyToUpdate is not null)
                 {

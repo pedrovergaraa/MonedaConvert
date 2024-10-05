@@ -31,14 +31,14 @@ namespace CurrencyConvert.Controllers
                 return Unauthorized("Invalid email or password"); // Si no es válido, devolvemos Unauthorized
 
             // Paso 2: Crear el token JWT
-            var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config["Authentication:SecretForKey"]));
+            var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config["Authentication:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             // Claims: Se añaden datos del usuario que se incluirán en el JWT
             var claims = new List<Claim>
             {
                 new Claim("sub", user.UserId.ToString()),
-                new Claim("email", user.Email),
+                new Claim("Email", user.Email),
                 new Claim("role", "User"), // Agregar más información si es necesario
             };
 

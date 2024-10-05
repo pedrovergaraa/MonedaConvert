@@ -7,7 +7,7 @@ namespace CurrencyConvert.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int? UserId { get; set; }
+        public int UserId { get; set; }
 
         public string? Email { get; set; }
 

@@ -6,6 +6,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Data\Implementations\**" />
+    <Compile Remove="Data\Interfaces\**" />
+    <Content Remove="Data\Implementations\**" />
+    <Content Remove="Data\Interfaces\**" />
+    <EmbeddedResource Remove="Data\Implementations\**" />
+    <EmbeddedResource Remove="Data\Interfaces\**" />
+    <None Remove="Data\Implementations\**" />
+    <None Remove="Data\Interfaces\**" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.27" />
@@ -17,10 +28,5 @@
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Data\Implementations\" />
-		<Folder Include="Data\Interfaces\" />
-	</ItemGroup>
 
 </Project>

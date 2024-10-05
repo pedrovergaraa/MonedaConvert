@@ -1,5 +1,5 @@
 ﻿using CurrencyConvert.Entities;
-using Microsoft.EntityFrameworkCore
+using Microsoft.EntityFrameworkCore;
 
 namespace CurrencyConvert.Data
 {
@@ -8,7 +8,7 @@ namespace CurrencyConvert.Data
         public DbSet<User>Users { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<Currency> Currencies { get; set; }
-        public DbSet<FavoriteCurrency> FavoriteCuerrencies { get; set; }
+        public DbSet<FavoriteCurrency> FavoriteCurrencies { get; set; }
 
         public CurrencyContext(DbContextOptions<CurrencyContext> options) : base(options) //Acá estamos llamando al constructor de DbContext que es el que acepta las opciones
         {
@@ -19,39 +19,45 @@ namespace CurrencyConvert.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-            Currency pesoArgentino = new Currency()
+            modelBuilder.Entity<User>()
+             .HasOne<Subscription>(u => u.Subscription).
+             WithMany(c => c.Users);
+
+            modelBuilder.Entity<Currency>()
+                .HasOne<User>(u => u.User)
+                .WithMany(c => c.Currencies);
+
+            Subscription sub1 = new Subscription()
             {
-                Id = 1,
-                Legend = "Peso Argentino",
-                Symbol = "Ars$",
-                IC = 0.002
-            };
-            Currency dolarAmericano = new Currency()
-            {
-                Id = 2,
-                Legend = "Dolar Americano",
-                Symbol = "Usd$",
-                IC = 1
-            };
-            Currency coronaCheca = new Currency()
-            {
-                Id = 3,
-                Legend = "Corona Checa",
-                Symbol = "Kc$",
-                IC = 0.043
-            };
-            Currency euro = new Currency()
-            {
-                Id = 4,
-                Legend = "Euro",
-                Symbol = "Eur$",
-                IC = 1.09
+                SubId = 1,
+                Name = "Free",
+                Convertions = 10,
+                Price = 0
+
             };
 
-            modelBuilder.Entity<Currency>().HasData(
-               pesoArgentino, dolarAmericano, coronaCheca, euro);
 
-            base.OnModelCreating(modelBuilder);
+            Subscription sub2 = new Subscription()
+            {
+                SubId = 2,
+                Name = "Trial",
+                Convertions = 100,
+                Price = 10
+
+            };
+
+
+            Subscription sub3 = new Subscription()
+            {
+                SubId = 3,
+                Name = "Premium",
+                Convertions = 999999999999999999,
+                Price = 15
+
+            };
+
+            modelBuilder.Entity<Subscription>()
+             .HasData(sub1, sub2, sub3);
         }
 
     }

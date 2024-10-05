@@ -11,7 +11,7 @@ namespace CurrencyConvert.Entities
 
         public string? Name { get; set; }
 
-        public long Convertions { get; set; }
+        public long Conversions { get; set; }
 
         public int Price { get; set; }
 

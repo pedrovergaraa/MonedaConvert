@@ -31,7 +31,7 @@ namespace CurrencyConvert.Data
             {
                 SubId = 1,
                 Name = "Free",
-                Convertions = 10,
+                Conversions = 10,
                 Price = 0
 
             };
@@ -41,7 +41,7 @@ namespace CurrencyConvert.Data
             {
                 SubId = 2,
                 Name = "Trial",
-                Convertions = 100,
+                Conversions = 100,
                 Price = 10
 
             };
@@ -51,13 +51,15 @@ namespace CurrencyConvert.Data
             {
                 SubId = 3,
                 Name = "Premium",
-                Convertions = 999999999999999999,
+                Conversions = 999999999999999999,
                 Price = 15
 
             };
 
             modelBuilder.Entity<Subscription>()
              .HasData(sub1, sub2, sub3);
+
+            base.OnModelCreating(modelBuilder);
         }
 
     }

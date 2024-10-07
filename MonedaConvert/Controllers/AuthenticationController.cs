@@ -22,36 +22,36 @@ namespace CurrencyConvert.Controllers
         }
 
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] AuthenticationRequestDto authenticationRequestBody)
+        public IActionResult Autenticate(AuthenticationRequestDto authenticationRequestBody)
         {
-            // Paso 1: Validamos las credenciales del usuario
+            //Paso 1: Validamos las credenciales
             var user = _userService.ValidateUser(authenticationRequestBody);
+            Console.WriteLine("Llego aca");
+            if (user is null)
+                return Unauthorized();
+            Console.WriteLine("Aca tmb");
+            //Paso 2: Crear el token
+            var securityPassword = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config["Authentication:Key"]));
 
-            if (user == null)
-                return Unauthorized("Invalid email or password"); // Si no es válido, devolvemos Unauthorized
+            var credentials = new SigningCredentials(securityPassword, SecurityAlgorithms.HmacSha256);
 
-            // Paso 2: Crear el token JWT
-            var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config["Authentication:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            // Claims: Se añaden datos del usuario que se incluirán en el JWT
-            var claims = new List<Claim>
-            {
-                new Claim("sub", user.UserId.ToString()),
-                new Claim("Email", user.Email),
-                new Claim("role", "User"), // Agregar más información si es necesario
-            };
+            var claimsForToken = new List<Claim>();
+            claimsForToken.Add(new Claim("sub", user.UserId.ToString()));
+            claimsForToken.Add(new Claim("Email", user.Email));
 
-            var jwtToken = new JwtSecurityToken(
-                _config["Authentication:Issuer"],
-                _config["Authentication:Audience"],
-                claims,
-                expires: DateTime.UtcNow.AddHours(1),
-                signingCredentials: credentials);
+            var jwtSecurityToken = new JwtSecurityToken(
+              _config["Authentication:Issuer"],
+              _config["Authentication:Audience"],
+              claimsForToken,
+              DateTime.UtcNow,
+              DateTime.UtcNow.AddHours(1),
+              credentials);
 
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+            var tokenToReturn = new JwtSecurityTokenHandler()
+                .WriteToken(jwtSecurityToken);
 
-            return Ok(new { Token = tokenString }); // Devolvemos el token JWT
+            return Ok(tokenToReturn);
         }
     }
 }

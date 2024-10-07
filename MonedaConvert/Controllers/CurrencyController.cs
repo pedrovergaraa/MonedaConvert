@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CurrencyConvert.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/currency")]
     [ApiController]
     [Authorize]
     public class CurrencyController : ControllerBase
@@ -25,10 +25,10 @@ namespace CurrencyConvert.Controllers
         [HttpGet("Convert")]
         public IActionResult Convert([FromQuery] float amount, [FromQuery] ConversionDto toConvert)
         {
-            int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier")).Value);
-            User user = _context.Users.SingleOrDefault(u => u.UserId == userId);
+            int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))!.Value);
+            User? user = _context.Users.SingleOrDefault(u => u.UserId == userId);
 
-            if (user.TotalConversions != 0)
+            if (user?.TotalConversions != 0)
             {
                 try
                 {
@@ -52,7 +52,7 @@ namespace CurrencyConvert.Controllers
         [HttpPost("CreateCurrency")]
         public IActionResult CreateCurrency(CreateAndUpdateCurrencyDto dto)
         {
-            int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier")).Value);
+            int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))!.Value);
             try
             {
                 _currencyService.CreateCurrency(userId, dto);
@@ -95,7 +95,7 @@ namespace CurrencyConvert.Controllers
         [HttpPost("AddFavoriteCurrency")]
         public IActionResult AddFavoriteCurrency(AddFavoriteDto dto)
         {
-            int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier")).Value);
+            int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))!.Value);
 
             try
             {

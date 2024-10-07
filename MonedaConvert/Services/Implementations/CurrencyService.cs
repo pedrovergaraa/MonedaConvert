@@ -23,15 +23,25 @@ namespace CurrencyConvert.Services.Implementations
         // Función para crear una moneda
         public void CreateCurrency(int loggedUserId, CreateAndUpdateCurrencyDto dto)
         {
-            Currency newCurrency = new Currency()
-            {
-                Legend = dto.Legend,
-                Symbol = dto.Symbol,
-                IC = dto.IC,
-                UserId = loggedUserId
-            };
-            _context.Currencies.Add(newCurrency);
-            _context.SaveChanges();
+                try
+                {
+                    var newCurrency = new Currency
+                    {
+                        Legend = dto.Legend,
+                        Symbol = dto.Symbol,
+                        IC = dto.IC,
+                        UserId = loggedUserId
+                    };
+
+                    _context.Currencies.Add(newCurrency);
+                    _context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    // Aquí puedes registrar el error o lanzarlo
+                    throw new Exception("Error creating currency: " + ex.Message);
+                }
+         
         }
 
         // Función para actualizar moneda

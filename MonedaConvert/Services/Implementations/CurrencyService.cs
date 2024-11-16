@@ -13,116 +13,94 @@ namespace CurrencyConvert.Services.Implementations
             _context = context;
         }
 
-        // Función para convertir moneda
+        // Obtener todas las monedas disponibles
+        public List<Currency> GetAllCurrencies()
+        {
+            return _context.Currencies.ToList();
+        }
+
+        // Obtener monedas favoritas de un usuario
+        public List<FavoriteCurrency> GetFavoriteCurrencies(int userId)
+        {
+            return _context.FavoriteCurrencies.Where(f => f.UserId == userId).ToList();
+        }
+
+
         public float ConvertCurrency(User user, float amount, ConversionDto toConvert)
         {
-            float result = (amount * toConvert.ICfromConvert / toConvert.ICtoConvert);
-            return result;
+            if (toConvert.ICfromConvert <= 0 || toConvert.ICtoConvert <= 0)
+                throw new Exception("Invalid conversion rates.");
+
+            return amount * toConvert.ICfromConvert / toConvert.ICtoConvert;
         }
 
-        // Función para crear una moneda
         public void CreateCurrency(int loggedUserId, CreateAndUpdateCurrencyDto dto)
         {
-                try
-                {
-                    var newCurrency = new Currency
-                    {
-                        Legend = dto.Legend,
-                        Symbol = dto.Symbol,
-                        IC = dto.IC,
-                        UserId = loggedUserId
-                    };
+            if (_context.Currencies.Any(c => c.Legend == dto.Legend))
+                throw new Exception("Currency already exists.");
 
-                    _context.Currencies.Add(newCurrency);
-                    _context.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    // Aquí puedes registrar el error o lanzarlo
-                    throw new Exception("Error creating currency: " + ex.Message);
-                }
-         
-        }
-
-        // Función para actualizar moneda
-        public void UpdateCurrency(int currencyId, string legend, CreateAndUpdateCurrencyDto dto)
-        {
-            Currency? currencyToUpdate = _context.Currencies.SingleOrDefault(c => c.CurrencyId == currencyId);
-            FavoriteCurrency? favoriteCurrencyToUpdate = _context.FavoriteCurrencies.SingleOrDefault(f => f.Legend == legend);
-
-            if (currencyToUpdate is not null)
+            var newCurrency = new Currency
             {
-                // Editar moneda del usuario
-                currencyToUpdate.Legend = dto.Legend;
-                currencyToUpdate.Symbol = dto.Symbol;
-                currencyToUpdate.IC = dto.IC;
+                Legend = dto.Legend,
+                Symbol = dto.Symbol,
+                IC = dto.IC,
+                UserId = loggedUserId
+            };
 
-                if (favoriteCurrencyToUpdate is not null)
-                {
-                    // Editar moneda favorita
-                    favoriteCurrencyToUpdate.Legend = dto.Legend;
-                    favoriteCurrencyToUpdate.Symbol = dto.Symbol;
-                    favoriteCurrencyToUpdate.IC = dto.IC;
-                }
-                _context.SaveChanges();
-            }
-            else
-            {
-                Console.WriteLine("The ID does not match");
-            }
-        }
-
-        // Función para eliminar moneda
-        public void DeleteCurrency(int currencyId, string legend)
-        {
-            FavoriteCurrency? favoriteCurrencyToDelete = _context.FavoriteCurrencies.SingleOrDefault(f => f.Legend == legend);
-            if (favoriteCurrencyToDelete is not null)
-            {
-                _context.FavoriteCurrencies.Remove(favoriteCurrencyToDelete);
-            }
-
-            Currency? currencyToDelete = _context.Currencies.SingleOrDefault(c => c.CurrencyId == currencyId);
-            if (currencyToDelete != null)
-            {
-                _context.Currencies.Remove(currencyToDelete);
-            }
+            _context.Currencies.Add(newCurrency);
             _context.SaveChanges();
         }
 
-        // Función para agregar una moneda favorita
-        public void AddFavoriteCurrency(int loggedUserId, AddFavoriteDto dto)
+        public void UpdateCurrency(int currencyId, CreateAndUpdateCurrencyDto dto)
         {
-            List<FavoriteCurrency> currencies = _context.FavoriteCurrencies.Where(u => u.UserId == loggedUserId).ToList();
+            var currencyToUpdate = _context.Currencies.SingleOrDefault(c => c.CurrencyId == currencyId);
+            if (currencyToUpdate is null)
+                throw new Exception("Currency not found.");
 
-            bool exists = currencies.Any(currency => dto.Legend == currency.Legend);
+            // Solo se actualizan los campos necesarios con los datos del DTO
+            currencyToUpdate.Legend = dto.Legend;
+            currencyToUpdate.Symbol = dto.Symbol;
+            currencyToUpdate.IC = dto.IC;
 
-            if (!exists)
-            {
-                FavoriteCurrency newFav = new FavoriteCurrency()
-                {
-                    Legend = dto.Legend,
-                    Symbol = dto.Symbol,
-                    IC = dto.IC,
-                    UserId = loggedUserId
-                };
-                _context.FavoriteCurrencies.Add(newFav);
-                _context.SaveChanges();
-            }
-            else
-            {
-                Console.WriteLine("This currency is already in favorites");
-            }
+            _context.SaveChanges();  // Guardamos los cambios en la base de datos
         }
 
-        // Función para eliminar una moneda favorita
-        public void RemoveFavoriteCurrency(int currencyId)
+        public void DeleteCurrency(int currencyId)
         {
-            FavoriteCurrency? currencyToRemove = _context.FavoriteCurrencies.SingleOrDefault(c => c.FavoriteCurrencyId == currencyId);
-            if (currencyToRemove != null)
+            var currency = _context.Currencies.FirstOrDefault(c => c.CurrencyId == currencyId);
+            if (currency == null)
+                throw new Exception("Currency not found.");
+
+            _context.Currencies.Remove(currency);
+            _context.SaveChanges();  // Eliminamos la moneda de la base de datos
+        }
+
+
+        public void AddFavoriteCurrency(int loggedUserId, AddFavoriteDto dto)
+        {
+            if (_context.FavoriteCurrencies.Any(f => f.Legend == dto.Legend && f.UserId == loggedUserId))
+                throw new Exception("Currency is already in favorites.");
+
+            var newFavorite = new FavoriteCurrency
             {
-                _context.FavoriteCurrencies.Remove(currencyToRemove);
-                _context.SaveChanges();
-            }
+                Legend = dto.Legend,
+                Symbol = dto.Symbol,
+                IC = dto.IC,
+                UserId = loggedUserId
+            };
+
+            _context.FavoriteCurrencies.Add(newFavorite);
+            _context.SaveChanges();
+        }
+
+        public void RemoveFavoriteCurrency(int favoriteCurrencyId)
+        {
+            var currencyToRemove = _context.FavoriteCurrencies.SingleOrDefault(c => c.FavoriteCurrencyId == favoriteCurrencyId);
+            if (currencyToRemove is null)
+                throw new Exception("Favorite currency not found.");
+
+            _context.FavoriteCurrencies.Remove(currencyToRemove);
+            _context.SaveChanges();
         }
     }
 }

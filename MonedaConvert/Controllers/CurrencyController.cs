@@ -1,10 +1,9 @@
-﻿using CurrencyConvert.Data;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using CurrencyConvert.Data;
 using CurrencyConvert.Entities;
 using CurrencyConvert.Models.Dtos;
 using CurrencyConvert.Services.Implementations;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
 
 namespace CurrencyConvert.Controllers
 {
@@ -22,91 +21,118 @@ namespace CurrencyConvert.Controllers
             _context = context;
         }
 
+        [HttpGet("GetAllCurrencies")]
+        public IActionResult GetAllCurrencies()
+        {
+            try
+            {
+                var currencies = _currencyService.GetAllCurrencies();
+                return Ok(currencies);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("GetFavoriteCurrencies")]
+        public IActionResult GetFavoriteCurrencies()
+        {
+            int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))!.Value);
+            try
+            {
+                var favoriteCurrencies = _currencyService.GetFavoriteCurrencies(userId);
+                return Ok(favoriteCurrencies);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         [HttpGet("Convert")]
         public IActionResult Convert([FromQuery] float amount, [FromQuery] ConversionDto toConvert)
         {
-            int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))!.Value);
+            int userId = int.Parse(User.Claims.First(x => x.Type.Contains("nameidentifier"))!.Value);
             User? user = _context.Users.SingleOrDefault(u => u.UserId == userId);
 
-            if (user?.TotalConversions != 0)
+            if (user is null)
+                return Unauthorized("User not found.");
+
+            if (user.TotalConversions == 0)
+                return BadRequest("No conversions remaining.");
+
+            try
             {
-                try
-                {
-                    float result = _currencyService.ConvertCurrency(user, amount, toConvert);
-                    user.TotalConversions -= 1;
-                    _context.SaveChanges();
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    return BadRequest(ex);
-                }
-            }
-            else
-            {
-                float result = -1;
+                float result = _currencyService.ConvertCurrency(user, amount, toConvert);
+                user.TotalConversions -= 1;
+                _context.SaveChanges();
                 return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Conversion error: {ex.Message}");
             }
         }
 
         [HttpPost("CreateCurrency")]
         public IActionResult CreateCurrency(CreateAndUpdateCurrencyDto dto)
         {
-            int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))!.Value);
+            int userId = int.Parse(User.Claims.First(x => x.Type.Contains("nameidentifier"))!.Value);
+
             try
             {
                 _currencyService.CreateCurrency(userId, dto);
+                return Ok("Currency created successfully.");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest($"Error creating currency: {ex.Message}");
             }
-            return Ok("Created Successfully");
         }
-
-        [HttpPut("EditCurrency")]
-        public IActionResult UpdateCurrency(int currencyId, string legend, CreateAndUpdateCurrencyDto dto)
+        [HttpPut("EditCurrency/{currencyId}")]
+        public IActionResult UpdateCurrency(int currencyId, [FromBody] CreateAndUpdateCurrencyDto dto)
         {
             try
             {
-                _currencyService.UpdateCurrency(currencyId, legend, dto);
+                _currencyService.UpdateCurrency(currencyId, dto);  // Actualiza la moneda pasando el currencyId y el DTO
+                return Ok("Currency edited successfully.");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest($"Error editing currency: {ex.Message}");
             }
-            return Ok("Edited Successfully");
         }
 
-        [HttpDelete("DeleteCurrency")]
-        public IActionResult DeleteCurrency(int currencyId, string legend)
+        [HttpDelete("DeleteCurrency/{currencyId}")]
+        public IActionResult DeleteCurrency(int currencyId)
         {
             try
             {
-                _currencyService.DeleteCurrency(currencyId, legend);
+                _currencyService.DeleteCurrency(currencyId);  // Elimina la moneda pasando solo el currencyId
+                return Ok("Currency deleted successfully.");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest($"Error deleting currency: {ex.Message}");
             }
-            return Ok("Deleted Successfully");
         }
+
 
         [HttpPost("AddFavoriteCurrency")]
         public IActionResult AddFavoriteCurrency(AddFavoriteDto dto)
         {
-            int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))!.Value);
+            int userId = int.Parse(User.Claims.First(x => x.Type.Contains("nameidentifier"))!.Value);
 
             try
             {
                 _currencyService.AddFavoriteCurrency(userId, dto);
+                return Ok("Favorite currency added successfully.");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest($"Error adding favorite currency: {ex.Message}");
             }
-
-            return Ok("Favorite currency added successfully.");
         }
 
         [HttpDelete("RemoveFavoriteCurrency")]
@@ -115,13 +141,12 @@ namespace CurrencyConvert.Controllers
             try
             {
                 _currencyService.RemoveFavoriteCurrency(favoriteCurrencyId);
+                return Ok("Favorite currency removed successfully.");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest($"Error removing favorite currency: {ex.Message}");
             }
-
-            return Ok("Favorite currency removed successfully.");
         }
     }
 }

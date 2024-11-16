@@ -9,13 +9,13 @@ namespace CurrencyConvert.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SubId { get; set; }
 
-        public string? Name { get; set; }
-
+        [Required] 
+        public string Name { get; set; } = string.Empty;
         public long Conversions { get; set; }
 
         public int Price { get; set; }
 
-        public List<User>? Users { get; set; }
+        public List<User>? Users { get; set; } = new List<User>();
 
     }
 }

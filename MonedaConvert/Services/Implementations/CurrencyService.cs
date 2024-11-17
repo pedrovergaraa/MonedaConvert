@@ -65,10 +65,8 @@ namespace CurrencyConvert.Services.Implementations
 
         public float ConvertCurrency(User user, float amount, ConversionDto toConvert)
         {
-            if (toConvert.ICfromConvert <= 0 || toConvert.ICtoConvert <= 0)
-                throw new Exception("Invalid conversion rates.");
-
-            return amount * toConvert.ICfromConvert / toConvert.ICtoConvert;
+            float result = amount * toConvert.ICfromConvert / toConvert.ICtoConvert;
+            return result;
         }
 
        public void CreateCurrency(int userId, CreateAndUpdateCurrencyDto dto)
@@ -85,8 +83,8 @@ namespace CurrencyConvert.Services.Implementations
                 UserId = userId
             };
 
-    _context.Currencies.Add(newCurrency);
-    _context.SaveChanges();
+            _context.Currencies.Add(newCurrency);
+            _context.SaveChanges();
 }
 
 

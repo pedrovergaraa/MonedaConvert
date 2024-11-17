@@ -16,6 +16,36 @@ namespace CurrencyConvert.Controllers
             _userService = userService;
         }
 
+
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] AuthenticationRequestDto dto)
+        {
+            try
+            {
+                // Validar las credenciales del usuario
+                var user = _userService.ValidateUser(dto);
+                if (user == null)
+                {
+                    // Si el usuario no es válido, devolver un error de autenticación
+                    return Unauthorized("Correo o contraseña incorrectos");
+                }
+
+                // Si la validación es exitosa, devolvemos los datos del usuario
+                return Ok(new
+                {
+                    Message = "Autenticación exitosa",
+                    UserId = user.UserId,
+                    Email = user.Email,
+                    SubscriptionId = user.SubscriptionId ?? 1 // Si no tiene suscripción, asignar la Free por defecto
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+        }
+
+
         [HttpPost("register")]
         public IActionResult Create(CreateAndUpdateUserDto dto)
         {

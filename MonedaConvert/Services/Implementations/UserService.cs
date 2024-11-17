@@ -16,14 +16,19 @@ namespace CurrencyConvert.Services.Implementations
             _context = context;
         }
 
+
         public User ValidateUser(AuthenticationRequestDto dto)
         {
+            // Buscar el usuario por email
             var user = _context.Users.Include(u => u.Currencies).FirstOrDefault(u => u.Email == dto.Email);
+
+            // Verificar si el usuario existe y la contraseña coincide
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
                 return null;
 
             return user;
         }
+
 
         public void Create(CreateAndUpdateUserDto dto)
         {

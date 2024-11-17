@@ -134,7 +134,7 @@ namespace CurrencyConvert.Controllers
             {
                 // Obtener el ID del usuario autenticado
                 int userId = int.Parse(User.Claims.First(x => x.Type.Contains("nameidentifier"))!.Value);
-                var user = _context.Users.Include(u => u.Subscription).SingleOrDefault(u => u.UserId == userId);
+                User user = _context.Users.Include(u => u.Subscription).SingleOrDefault(u => u.UserId == userId);
 
                 if (user is null)
                     return Unauthorized("Usuario no encontrado.");
@@ -145,6 +145,13 @@ namespace CurrencyConvert.Controllers
                     user.TotalConversions = 10; // El plan Free tiene 10 conversiones disponibles
                     _context.SaveChanges();
                 }
+
+                if (amount <= 0)
+                    return BadRequest("La cantidad debe ser mayor que 0.");
+
+                if (toConvert.ICfromConvert <= 0 || toConvert.ICtoConvert <= 0)
+                    return BadRequest("Las tasas de conversión no pueden ser cero o negativas.");
+
 
                 // Validar intentos restantes
                 if (user.TotalConversions <= 0)

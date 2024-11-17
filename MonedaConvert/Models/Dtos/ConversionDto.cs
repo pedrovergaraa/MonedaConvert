@@ -6,6 +6,5 @@
 
         public float ICtoConvert { get; set; }
 
-        public float Amount { get; set; }   
     }
 }

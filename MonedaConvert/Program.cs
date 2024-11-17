@@ -16,9 +16,23 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.WriteIndented = true;
 });
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        name: "AllowAny",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+        });
+});
+
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(setupAction =>
 {
-    setupAction.AddSecurityDefinition("CoverterApiBearerAuth", new OpenApiSecurityScheme() //Esto va a permitir usar swagger con el token.
+    setupAction.AddSecurityDefinition("ConverterApiBearerAuth", new OpenApiSecurityScheme() 
     {
         Type = SecuritySchemeType.Http,
         Scheme = "Bearer",
@@ -33,7 +47,7 @@ builder.Services.AddSwaggerGen(setupAction =>
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = "ConverterApiBearerAuth" } //Tiene que coincidir con el id seteado arriba en la definición
+                    Id = "ConverterApiBearerAuth" } 
                 }, new List<string>() }
     });
 });
@@ -42,8 +56,8 @@ builder.Services.AddDbContext<CurrencyContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddAuthentication("Bearer") //"Bearer" es el tipo de auntenticación que tenemos que elegir después en PostMan para pasarle el token
-    .AddJwtBearer(options => //Acá definimos la configuración de la autenticación. le decimos qué cosas queremos comprobar. La fecha de expiración se valida por defecto.
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer(options => 
     {
         options.TokenValidationParameters = new()
         {
@@ -73,6 +87,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowAny");
 app.UseAuthentication();
 app.UseAuthorization();
 

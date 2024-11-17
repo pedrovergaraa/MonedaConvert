@@ -3,6 +3,7 @@ using System;
 using CurrencyConvert.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MonedaConvert.Migrations
 {
     [DbContext(typeof(CurrencyContext))]
-    partial class CurrencyContextModelSnapshot : ModelSnapshot
+    [Migration("20241117125136_ValidacionDeMoneda")]
+    partial class ValidacionDeMoneda
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.16");
@@ -73,7 +76,7 @@ namespace MonedaConvert.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Conversions")
+                    b.Property<long>("Conversions")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -91,21 +94,21 @@ namespace MonedaConvert.Migrations
                         new
                         {
                             SubId = 1,
-                            Conversions = 10,
+                            Conversions = 10L,
                             Name = "Free",
                             Price = 0
                         },
                         new
                         {
                             SubId = 2,
-                            Conversions = 100,
+                            Conversions = 100L,
                             Name = "Trial",
                             Price = 10
                         },
                         new
                         {
                             SubId = 3,
-                            Conversions = 2147483647,
+                            Conversions = 9223372036854775807L,
                             Name = "Premium",
                             Price = 15
                         });

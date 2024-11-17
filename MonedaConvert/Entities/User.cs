@@ -23,6 +23,7 @@ namespace CurrencyConvert.Entities
         public List<Currency>? Currencies { get; set; }
 
         // Nueva propiedad para las monedas favoritas
-        public List<FavoriteCurrency>? FavoriteCurrencies { get; set; }
+        public List<FavoriteCurrency> FavoriteCurrencies { get; set; } = new List<FavoriteCurrency>();
+
     }
 }

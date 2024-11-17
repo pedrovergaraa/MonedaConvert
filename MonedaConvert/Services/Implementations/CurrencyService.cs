@@ -25,6 +25,14 @@ namespace CurrencyConvert.Services.Implementations
             return _context.FavoriteCurrencies.Where(f => f.UserId == userId).ToList();
         }
 
+        public Currency GetCurrencyById(int currencyId)
+        {
+            // Intenta obtener la moneda por ID desde la base de datos
+            var currency = _context.Currencies.SingleOrDefault(c => c.CurrencyId == currencyId);
+            return currency;  // Devuelve la moneda encontrada o null si no se encuentra
+        }
+
+
 
         public float ConvertCurrency(User user, float amount, ConversionDto toConvert)
         {
@@ -34,10 +42,11 @@ namespace CurrencyConvert.Services.Implementations
             return amount * toConvert.ICfromConvert / toConvert.ICtoConvert;
         }
 
-        public void CreateCurrency(int loggedUserId, CreateAndUpdateCurrencyDto dto)
-        {
-            if (_context.Currencies.Any(c => c.Legend == dto.Legend))
-                throw new Exception("Currency already exists.");
+       public void CreateCurrency(int loggedUserId, CreateAndUpdateCurrencyDto dto)
+{
+            // Validar que la moneda no exista para este usuario
+            if (_context.Currencies.Any(c => c.Legend == dto.Legend && c.UserId == loggedUserId))
+                throw new Exception("Currency already exists for this user.");
 
             var newCurrency = new Currency
             {
@@ -47,9 +56,10 @@ namespace CurrencyConvert.Services.Implementations
                 UserId = loggedUserId
             };
 
-            _context.Currencies.Add(newCurrency);
-            _context.SaveChanges();
-        }
+    _context.Currencies.Add(newCurrency);
+    _context.SaveChanges();
+}
+
 
         public void UpdateCurrency(int currencyId, CreateAndUpdateCurrencyDto dto)
         {
@@ -80,6 +90,7 @@ namespace CurrencyConvert.Services.Implementations
         {
             if (_context.FavoriteCurrencies.Any(f => f.Legend == dto.Legend && f.UserId == loggedUserId))
                 throw new Exception("Currency is already in favorites.");
+
 
             var newFavorite = new FavoriteCurrency
             {

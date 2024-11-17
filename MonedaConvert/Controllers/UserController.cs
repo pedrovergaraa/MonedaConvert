@@ -16,7 +16,7 @@ namespace CurrencyConvert.Controllers
             _userService = userService;
         }
 
-        [HttpPost("Register")]
+        [HttpPost("register")]
         public IActionResult Create(CreateAndUpdateUserDto dto)
         {
             try
@@ -37,16 +37,22 @@ namespace CurrencyConvert.Controllers
             if (user == null)
                 return NotFound("Usuario no encontrado");
 
-            var userDto = new CreateAndUpdateUserDto
+            var userDto = new UserDto
             {
+                UserId = user.UserId, // Asegurarse de incluir el ID
                 Email = user.Email,
                 SubscriptionId = user.SubscriptionId,
-                Currencies = user.Currencies.Select(c => new CurrencyDto
+                Currencies = user.Currencies?.Select(c => new CurrencyDto
                 {
                     CurrencyId = c.CurrencyId,
                     Legend = c.Legend,
                     Symbol = c.Symbol,
                     IC = c.IC
+                }).ToList(),
+                FavoriteCurrencies = user.FavoriteCurrencies?.Select(f => new AddFavoriteDto
+                {
+                    Legend = f.Legend,
+                    Symbol = f.Symbol
                 }).ToList()
             };
 
@@ -57,19 +63,25 @@ namespace CurrencyConvert.Controllers
         public IActionResult GetAllUsers()
         {
             var users = _userService.GetAllUsers();
-            if (users == null || !users.Any())
+            if (!users.Any())
                 return NotFound("No hay usuarios disponibles");
 
-            var userDtos = users.Select(u => new CreateAndUpdateUserDto
+            var userDtos = users.Select(u => new UserDto
             {
+                UserId = u.UserId, // Asegurarse de incluir el ID
                 Email = u.Email,
                 SubscriptionId = u.SubscriptionId,
-                Currencies = u.Currencies.Select(c => new CurrencyDto
+                Currencies = u.Currencies?.Select(c => new CurrencyDto
                 {
                     CurrencyId = c.CurrencyId,
                     Legend = c.Legend,
                     Symbol = c.Symbol,
                     IC = c.IC
+                }).ToList(),
+                FavoriteCurrencies = u.FavoriteCurrencies?.Select(f => new AddFavoriteDto
+                {
+                    Legend = f.Legend,
+                    Symbol = f.Symbol
                 }).ToList()
             }).ToList();
 

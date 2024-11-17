@@ -3,6 +3,7 @@ using System;
 using CurrencyConvert.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MonedaConvert.Migrations
 {
     [DbContext(typeof(CurrencyContext))]
-    partial class CurrencyContextModelSnapshot : ModelSnapshot
+    [Migration("20241117203115_AddFavoriteCurrencyFix")]
+    partial class AddFavoriteCurrencyFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.16");

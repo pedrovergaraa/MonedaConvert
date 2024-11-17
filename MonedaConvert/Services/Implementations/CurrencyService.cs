@@ -1,6 +1,7 @@
 ﻿using CurrencyConvert.Data;
 using CurrencyConvert.Entities;
 using CurrencyConvert.Models.Dtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace CurrencyConvert.Services.Implementations
 {
@@ -19,11 +20,39 @@ namespace CurrencyConvert.Services.Implementations
             return _context.Currencies.ToList();
         }
 
-        // Obtener monedas favoritas de un usuario
         public List<FavoriteCurrency> GetFavoriteCurrencies(int userId)
         {
-            return _context.FavoriteCurrencies.Where(f => f.UserId == userId).ToList();
+           List<FavoriteCurrency> favoriteCurrencies = _context.FavoriteCurrencies.Where(u => u.UserId == userId).ToList();
+            return favoriteCurrencies;
         }
+
+        public List<Currency> GetDefaultCurrencies(int userId)
+        {
+            try
+            {
+                // Lista hardcodeada de monedas predeterminadas
+                var defaultCurrencies = new List<Currency>
+        {
+            new Currency { CurrencyId = 1, Legend = "USD", Symbol = "$", IC = 1.0f, UserId = 0 },
+            new Currency { CurrencyId = 2, Legend = "EUR", Symbol = "€", IC = 1.09f, UserId = 0 },
+            new Currency { CurrencyId = 3, Legend = "GBP", Symbol = "£", IC = 0.8f, UserId = 0 },
+            new Currency { CurrencyId = 4, Legend = "JPY", Symbol = "¥", IC = 110.0f, UserId = 0 },
+            new Currency { CurrencyId = 5, Legend = "KC", Symbol = "kc", IC = 0.043f, UserId = 0 },
+            new Currency { CurrencyId = 6, Legend = "ARS", Symbol = "$", IC = 0.002f, UserId = 0 }
+        };
+
+                // Devolver las monedas predeterminadas
+                return defaultCurrencies;
+            }
+            catch (Exception ex)
+            {
+                // Capturar cualquier error
+                throw new Exception($"Error al obtener las monedas predeterminadas: {ex.Message}");
+            }
+        }
+
+
+
 
         public Currency GetCurrencyById(int currencyId)
         {
@@ -42,10 +71,10 @@ namespace CurrencyConvert.Services.Implementations
             return amount * toConvert.ICfromConvert / toConvert.ICtoConvert;
         }
 
-       public void CreateCurrency(int loggedUserId, CreateAndUpdateCurrencyDto dto)
+       public void CreateCurrency(int userId, CreateAndUpdateCurrencyDto dto)
 {
             // Validar que la moneda no exista para este usuario
-            if (_context.Currencies.Any(c => c.Legend == dto.Legend && c.UserId == loggedUserId))
+            if (_context.Currencies.Any(c => c.Legend == dto.Legend && c.UserId == userId))
                 throw new Exception("Currency already exists for this user.");
 
             var newCurrency = new Currency
@@ -53,7 +82,7 @@ namespace CurrencyConvert.Services.Implementations
                 Legend = dto.Legend,
                 Symbol = dto.Symbol,
                 IC = dto.IC,
-                UserId = loggedUserId
+                UserId = userId
             };
 
     _context.Currencies.Add(newCurrency);
@@ -86,23 +115,42 @@ namespace CurrencyConvert.Services.Implementations
         }
 
 
-        public void AddFavoriteCurrency(int loggedUserId, AddFavoriteDto dto)
+        public void AddFavoriteCurrency(int LoggedUserId, AddFavoriteDto dto)
         {
-            if (_context.FavoriteCurrencies.Any(f => f.Legend == dto.Legend && f.UserId == loggedUserId))
-                throw new Exception("Currency is already in favorites.");
+            // Traemos las monedas favoritas del usuario logueado
+            List<FavoriteCurrency> currencies = _context.FavoriteCurrencies.Where(u => u.UserId == LoggedUserId).ToList();
 
+            bool isAlreadyFavorite = false;
 
-            var newFavorite = new FavoriteCurrency
+            // Recorremos las monedas favoritas para ver si la que estamos agregando ya existe
+            foreach (FavoriteCurrency currency in currencies)
             {
-                Legend = dto.Legend,
-                Symbol = dto.Symbol,
-                IC = dto.IC,
-                UserId = loggedUserId
-            };
+                if (dto.Legend == currency.Legend)
+                {
+                    isAlreadyFavorite = true;
+                    break;
+                }
+            }
 
-            _context.FavoriteCurrencies.Add(newFavorite);
-            _context.SaveChanges();
+            // Si la moneda no está en la lista de favoritas, la agregamos
+            if (!isAlreadyFavorite)
+            {
+                FavoriteCurrency newFavorite = new FavoriteCurrency()
+                {
+                    Legend = dto.Legend,
+                    Symbol = dto.Symbol,
+                    IC = dto.IC,
+                    UserId = LoggedUserId   
+                };
+                _context.FavoriteCurrencies.Add(newFavorite);
+                _context.SaveChanges();
+            }
+            else
+            {
+                Console.WriteLine("Esa moneda ya está en tus favoritas.");
+            }
         }
+
 
         public void RemoveFavoriteCurrency(int favoriteCurrencyId)
         {

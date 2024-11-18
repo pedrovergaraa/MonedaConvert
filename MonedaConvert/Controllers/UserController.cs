@@ -111,7 +111,8 @@ namespace CurrencyConvert.Controllers
                 FavoriteCurrencies = u.FavoriteCurrencies?.Select(f => new AddFavoriteDto
                 {
                     Legend = f.Legend,
-                    Symbol = f.Symbol
+                    Symbol = f.Symbol,
+                    IC = f.IC
                 }).ToList()
             }).ToList();
 

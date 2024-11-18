@@ -19,14 +19,12 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(
-        name: "AllowAny",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-        });
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:4200") // Cambia según el puerto de tu frontend
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -88,10 +86,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAny");
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
+
+app.UseCors("AllowAngular");
 app.Run();

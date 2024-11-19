@@ -19,12 +19,13 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 // Configura CORS para permitir solicitudes desde localhost:4200
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddPolicy(
+        name: "AllowOrigin",
+        builder =>
     {
-        policy.WithOrigins("http://localhost:4200") // Permite solo el frontend en localhost:4200
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();  // Si necesitas enviar cookies o credenciales en las solicitudes
+        builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();  // Si necesitas enviar cookies o credenciales en las solicitudes
     });
 });
 
@@ -56,7 +57,8 @@ builder.Services.AddDbContext<CurrencyContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddAuthentication("Bearer")
+builder.Services
+    .AddAuthentication("Bearer")
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new()
@@ -89,7 +91,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Configura el middleware de CORS antes de usar autenticación y autorización
-app.UseCors("AllowFrontend");
+app.UseCors("AllowOrigin");
 
 app.UseAuthentication();
 app.UseAuthorization();

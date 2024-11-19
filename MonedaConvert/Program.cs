@@ -16,21 +16,22 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.WriteIndented = true;
 });
 
-
+// Configura CORS para permitir solicitudes desde localhost:4200
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:4200") // Cambia según el puerto de tu frontend
+        policy.WithOrigins("http://localhost:4200") // Permite solo el frontend en localhost:4200
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();  // Si necesitas enviar cookies o credenciales en las solicitudes
     });
 });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(setupAction =>
 {
-    setupAction.AddSecurityDefinition("ConverterApiBearerAuth", new OpenApiSecurityScheme() 
+    setupAction.AddSecurityDefinition("ConverterApiBearerAuth", new OpenApiSecurityScheme()
     {
         Type = SecuritySchemeType.Http,
         Scheme = "Bearer",
@@ -45,17 +46,18 @@ builder.Services.AddSwaggerGen(setupAction =>
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = "ConverterApiBearerAuth" } 
+                    Id = "ConverterApiBearerAuth" }
                 }, new List<string>() }
     });
 });
+
 builder.Services.AddDbContext<CurrencyContext>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer(options => 
+    .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new()
         {
@@ -86,11 +88,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Configura el middleware de CORS antes de usar autenticación y autorización
+app.UseCors("AllowFrontend");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-
-app.UseCors("AllowAngular");
 app.Run();

@@ -28,20 +28,22 @@ public class SubscriptionController : ControllerBase
             return BadRequest($"Error: {ex.Message}");
         }
     }
-
-    // Obtener la suscripción actual del usuario
-    [HttpGet("userSub")]
-    public IActionResult GetUserSubscription()
+    [HttpGet("userSub/{userId}")]
+    public IActionResult GetUserSubscription(int userId)
     {
         try
         {
-            int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))!.Value);
+            if (userId <= 0)
+            {
+                return BadRequest("Invalid user ID.");
+            }
+
             var subscription = _subscriptionService.GetUserSubscription(userId);
 
             return Ok(new
             {
                 subscription.Name,
-                subscription.Conversions,
+                subscription.AllowedAttempts,
                 subscription.Price
             });
         }
@@ -51,7 +53,7 @@ public class SubscriptionController : ControllerBase
         }
     }
 
-    // Cambiar la suscripción de un usuario
+
     [HttpPost("change")]
     public IActionResult ChangeSubscription(ChangeSubscriptionDto dto)
     {
@@ -62,7 +64,13 @@ public class SubscriptionController : ControllerBase
 
         try
         {
-            int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))!.Value);
+            var userIdClaim = HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"));
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User ID claim not found.");
+            }
+
+            int userId = Int32.Parse(userIdClaim.Value);
             _subscriptionService.ChangeUserSubscription(userId, dto.SubscriptionId);
 
             return Ok("Subscription updated successfully");
@@ -72,4 +80,5 @@ public class SubscriptionController : ControllerBase
             return BadRequest($"Error: {ex.Message}");
         }
     }
+
 }

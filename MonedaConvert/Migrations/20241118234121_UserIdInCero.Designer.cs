@@ -3,6 +3,7 @@ using System;
 using CurrencyConvert.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MonedaConvert.Migrations
 {
     [DbContext(typeof(CurrencyContext))]
-    partial class CurrencyContextModelSnapshot : ModelSnapshot
+    [Migration("20241118234121_UserIdInCero")]
+    partial class UserIdInCero
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.16");
@@ -51,7 +54,8 @@ namespace MonedaConvert.Migrations
                             IC = 1f,
                             IsDefault = true,
                             Legend = "USD",
-                            Symbol = "$"
+                            Symbol = "$",
+                            UserId = 0
                         },
                         new
                         {
@@ -59,7 +63,8 @@ namespace MonedaConvert.Migrations
                             IC = 1.09f,
                             IsDefault = false,
                             Legend = "EUR",
-                            Symbol = "€"
+                            Symbol = "€",
+                            UserId = 0
                         },
                         new
                         {
@@ -67,7 +72,8 @@ namespace MonedaConvert.Migrations
                             IC = 0.8f,
                             IsDefault = false,
                             Legend = "GBP",
-                            Symbol = "£"
+                            Symbol = "£",
+                            UserId = 0
                         },
                         new
                         {
@@ -75,7 +81,8 @@ namespace MonedaConvert.Migrations
                             IC = 110f,
                             IsDefault = false,
                             Legend = "JPY",
-                            Symbol = "¥"
+                            Symbol = "¥",
+                            UserId = 0
                         },
                         new
                         {
@@ -83,7 +90,8 @@ namespace MonedaConvert.Migrations
                             IC = 0.043f,
                             IsDefault = false,
                             Legend = "KC",
-                            Symbol = "kc"
+                            Symbol = "kc",
+                            UserId = 0
                         },
                         new
                         {
@@ -91,7 +99,8 @@ namespace MonedaConvert.Migrations
                             IC = 0.002f,
                             IsDefault = false,
                             Legend = "ARS",
-                            Symbol = "$"
+                            Symbol = "$",
+                            UserId = 0
                         });
                 });
 

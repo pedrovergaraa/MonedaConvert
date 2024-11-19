@@ -13,7 +13,7 @@ namespace CurrencyConvert.Entities
 
         public string Password { get; set; }
 
-        public int? TotalConversions { get; set; } = 0;
+        public int Attempts { get; set; } 
 
         [ForeignKey("SubscriptionId")]
         public Subscription? Subscription { get; set; }
@@ -22,8 +22,8 @@ namespace CurrencyConvert.Entities
 
         public List<Currency>? Currencies { get; set; }
 
-        // Nueva propiedad para las monedas favoritas
-        public List<FavoriteCurrency> FavoriteCurrencies { get; set; } = new List<FavoriteCurrency>();
+        public ICollection<FavoriteCurrency> FavoriteCurrencies { get; set; } = new List<FavoriteCurrency>();
+
 
     }
 }

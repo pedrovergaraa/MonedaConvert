@@ -2,6 +2,8 @@
 using CurrencyConvert.Services.Implementations;
 using CurrencyConvert.Models.Dtos;
 using CurrencyConvert.Entities;
+using System;
+using System.Linq;
 
 namespace CurrencyConvert.Controllers
 {
@@ -16,27 +18,23 @@ namespace CurrencyConvert.Controllers
             _userService = userService;
         }
 
-
         [HttpPost("login")]
         public IActionResult Login([FromBody] AuthenticationRequestDto dto)
         {
             try
             {
-                // Validar las credenciales del usuario
                 var user = _userService.ValidateUser(dto);
                 if (user == null)
                 {
-                    // Si el usuario no es válido, devolver un error de autenticación
                     return Unauthorized("Correo o contraseña incorrectos");
                 }
 
-                // Si la validación es exitosa, devolvemos los datos del usuario
                 return Ok(new
                 {
                     Message = "Autenticación exitosa",
                     UserId = user.UserId,
                     Email = user.Email,
-                    SubscriptionId = user.SubscriptionId ?? 1 // Si no tiene suscripción, asignar la Free por defecto
+                    SubscriptionId = user.SubscriptionId ?? 1 // Default to Free if not provided
                 });
             }
             catch (Exception ex)
@@ -45,9 +43,8 @@ namespace CurrencyConvert.Controllers
             }
         }
 
-
         [HttpPost("register")]
-        public IActionResult Create(CreateAndUpdateUserDto dto)
+        public IActionResult Register(CreateAndUpdateUserDto dto)
         {
             try
             {
@@ -69,7 +66,7 @@ namespace CurrencyConvert.Controllers
 
             var userDto = new UserDto
             {
-                UserId = user.UserId, // Asegurarse de incluir el ID
+                UserId = user.UserId,
                 Email = user.Email,
                 SubscriptionId = user.SubscriptionId,
                 Currencies = user.Currencies?.Select(c => new CurrencyDto
@@ -81,8 +78,7 @@ namespace CurrencyConvert.Controllers
                 }).ToList(),
                 FavoriteCurrencies = user.FavoriteCurrencies?.Select(f => new AddFavoriteDto
                 {
-                    Legend = f.Legend,
-                    Symbol = f.Symbol
+                    CurrencyId = f.CurrencyId
                 }).ToList()
             };
 
@@ -98,7 +94,7 @@ namespace CurrencyConvert.Controllers
 
             var userDtos = users.Select(u => new UserDto
             {
-                UserId = u.UserId, // Asegurarse de incluir el ID
+                UserId = u.UserId,
                 Email = u.Email,
                 SubscriptionId = u.SubscriptionId,
                 Currencies = u.Currencies?.Select(c => new CurrencyDto
@@ -110,9 +106,7 @@ namespace CurrencyConvert.Controllers
                 }).ToList(),
                 FavoriteCurrencies = u.FavoriteCurrencies?.Select(f => new AddFavoriteDto
                 {
-                    Legend = f.Legend,
-                    Symbol = f.Symbol,
-                    IC = f.IC
+                    CurrencyId = f.CurrencyId
                 }).ToList()
             }).ToList();
 

@@ -1,91 +1,98 @@
-﻿using CurrencyConvert.Entities;
+﻿using CurrencyConvert.Data;
+using CurrencyConvert.Entities;
 using CurrencyConvert.Models.Dtos;
-using CurrencyConvert.Data;
 using Microsoft.EntityFrameworkCore;
-using BCrypt.Net;
 using System.Linq;
+using System;
 
 namespace CurrencyConvert.Services.Implementations
 {
-    public class UserService
+
+public class UserService
+{
+    private readonly CurrencyContext _context;
+
+    public UserService(CurrencyContext context)
     {
-        private readonly CurrencyContext _context;
+        _context = context;
+    }
 
-        public UserService(CurrencyContext context)
+    public User ValidateUser(AuthenticationRequestDto dto)
+    {
+        var user = _context.Users.Include(u => u.Currencies)
+                                 .FirstOrDefault(u => u.Email == dto.Email);
+
+        if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
         {
-            _context = context;
+            return null; // Usuario no válido
         }
 
+        return user;
+    }
 
-        public User ValidateUser(AuthenticationRequestDto dto)
+    public void Create(CreateAndUpdateUserDto dto)
+    {
+        if (_context.Users.Any(u => u.Email == dto.Email))
+            throw new InvalidOperationException("Email already in use.");
+
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+
+        var user = new User
         {
-            // Buscar el usuario por email
-            var user = _context.Users.Include(u => u.Currencies).FirstOrDefault(u => u.Email == dto.Email);
+            Email = dto.Email,
+            Password = hashedPassword,
+            SubscriptionId = 1 // Default to Free subscription if not specified
+        };
 
-            // Verificar si el usuario existe y la contraseña coincide
-            if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
-                return null;
+        _context.Users.Add(user);
+        _context.SaveChanges();
+    }
 
-            return user;
-        }
+    public User GetUserById(int userId)
+    {
+        return _context.Users
+            .Include(u => u.Currencies)
+            .Include(u => u.Subscription)
+            .FirstOrDefault(u => u.UserId == userId);
+    }
 
+    public void UpdateUser(int userId, CreateAndUpdateUserDto dto)
+    {
+        var user = _context.Users.Find(userId);
 
-        public void Create(CreateAndUpdateUserDto dto)
-        {
-            if (_context.Users.Any(u => u.Email == dto.Email))
-                throw new Exception("El correo electrónico ya está en uso");
+        if (user == null)
+            throw new KeyNotFoundException("User not found.");
 
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+        user.Email = dto.Email ?? user.Email;
+        
+        if (!string.IsNullOrEmpty(dto.Password))
+            user.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
-            var user = new User
-            {
-                Email = dto.Email,
-                Password = hashedPassword,
-                SubscriptionId = dto.SubscriptionId ?? 1
-            };
+        // Update subscription if specified, otherwise keep current one.
+        user.SubscriptionId = dto.SubscriptionId ?? user.SubscriptionId;
 
-            _context.Users.Add(user);
-            _context.SaveChanges();
-        }
-
-        public User GetUserById(int userId)
-        {
-            return _context.Users
-                .Include(u => u.Currencies) // Asegurarse de cargar las monedas asociadas al usuario
-                .FirstOrDefault(u => u.UserId == userId);
-        }
-
-        public void UpdateUser(int userId, CreateAndUpdateUserDto dto)
-        {
-            var user = _context.Users
-                .Include(u => u.Currencies) // Asegurarse de cargar las monedas asociadas al usuario
-                .FirstOrDefault(u => u.UserId == userId);
-
-            if (user == null)
-                throw new Exception("Usuario no encontrado");
-
-            user.Email = dto.Email ?? user.Email;
-            if (!string.IsNullOrEmpty(dto.Password))
-                user.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-            user.SubscriptionId = dto.SubscriptionId ?? user.SubscriptionId;
-
-            _context.Users.Update(user);
-            _context.SaveChanges();
-        }
+        _context.SaveChanges();
+    }
 
         public List<User> GetAllUsers()
         {
-            return _context.Users.Include(u => u.Currencies).ToList();
+            return _context.Users
+                           .Include(u => u.Currencies) // Carga de las monedas relacionadas con el usuario
+                           .Include(u => u.FavoriteCurrencies) // Carga de los favoritos
+                               .ThenInclude(fc => fc.Currency) // Carga de la moneda relacionada en FavoriteCurrency
+                           .ToList();
         }
+
 
         public void DeleteUser(int userId)
-        {
-            var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
-            if (user == null)
-                throw new Exception("Usuario no encontrado");
+    {
+        var user = _context.Users.Find(userId);
 
-            _context.Users.Remove(user);
-            _context.SaveChanges();
-        }
+        if (user == null)
+            throw new KeyNotFoundException("User not found.");
+
+        _context.Users.Remove(user);
+        _context.SaveChanges();
     }
+}
 }

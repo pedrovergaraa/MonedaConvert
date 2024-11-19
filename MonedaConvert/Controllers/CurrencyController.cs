@@ -32,7 +32,7 @@ namespace CurrencyConvert.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest($"Error: {ex.Message}");
             }
         }
 
@@ -41,75 +41,47 @@ namespace CurrencyConvert.Controllers
         {
             try
             {
-                // Obtiene la moneda usando el servicio
                 var currency = _currencyService.GetCurrencyById(currencyId);
-
-                // Si la moneda no existe, devuelve un error 404
                 if (currency == null)
                 {
                     return NotFound("Currency not found.");
                 }
-
-                return Ok(currency);  // Devuelve la moneda encontrada
+                return Ok(currency);
             }
             catch (Exception ex)
             {
-                // Devuelve un error si ocurre una excepción
                 return BadRequest($"Error: {ex.Message}");
             }
         }
 
-        [HttpGet("favorites")]
-        public IActionResult GetFavoriteCurrencies()
+        [HttpGet("favorites/{userId}")]
+        public IActionResult GetFavoriteCurrencies(int userId)
         {
-            try
-            {
-                // Obtener el userId desde el token JWT
-                int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))!.Value);
+            var favoriteCurrencies = _currencyService.GetFavoriteCurrencies(userId);
+            if (favoriteCurrencies == null || !favoriteCurrencies.Any())
+                return NotFound("No favorite currencies found.");
 
-                // Obtener las monedas favoritas desde el servicio
-                var favoriteCurrencies = _currencyService.GetFavoriteCurrencies(userId);
-
-                // Si no se encuentran monedas favoritas, devolver un NotFound
-                if (favoriteCurrencies == null || !favoriteCurrencies.Any())
-                {
-                    return NotFound("No favorite currencies found for the user.");
-                }
-
-                // Mapear la respuesta para enviar solo los datos necesarios
-                var result = favoriteCurrencies.Select(fc => new
-                {
-                    fc.FavoriteCurrencyId,
-                    fc.Legend,
-                    fc.Symbol,
-                    fc.IC
-                });
-
-                // Retornar las monedas favoritas
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Error: {ex.Message}");
-            }
+            return Ok(favoriteCurrencies);
         }
-
-
 
         [HttpGet("defaultCurrencies")]
         public IActionResult GetDefaultCurrencies()
         {
             try
             {
-                // Obtener las monedas predeterminadas llamando al servicio
-                var defaultCurrencies = _currencyService.GetDefaultCurrencies(0); // El 0 es para un usuario genérico o predeterminado, ya que no se utiliza en este caso
+                var defaultCurrencies = _currencyService.GetDefaultCurrencies();
 
-                if (defaultCurrencies == null || !defaultCurrencies.Any())
+                if (defaultCurrencies == null)
                 {
-                    return NotFound("No default currencies found.");
+                    return NotFound("Error: Unable to fetch default currencies.");
                 }
 
-                // Mapear las monedas predeterminadas si es necesario
+                if (!defaultCurrencies.Any())
+                {
+                    return Ok(new List<object>()); // Devuelve una lista vacía
+                }
+
+
                 var result = defaultCurrencies.Select(c => new
                 {
                     c.CurrencyId,
@@ -126,65 +98,56 @@ namespace CurrencyConvert.Controllers
             }
         }
 
+       [HttpGet("convert")]
+public IActionResult Convert([FromQuery] float amount, [FromQuery] int currencyFromId, [FromQuery] int currencyToId)
+{
+    try
+    {
+        int userId = int.Parse(User.Claims.First(x => x.Type.Contains("nameidentifier"))!.Value);
+        User user = _context.Users.Include(u => u.Subscription).SingleOrDefault(u => u.UserId == userId);
 
-        [HttpGet("convert")]
-        public IActionResult Convert([FromQuery] float amount, [FromQuery] ConversionDto toConvert)
+        if (user == null)
+            return Unauthorized("Usuario no encontrado.");
+
+        if (amount <= 0)
+            return BadRequest("La cantidad debe ser mayor que 0.");
+
+        if (currencyFromId <= 0 || currencyToId <= 0)
+            return BadRequest("Las tasas de conversión no pueden ser cero o negativas.");
+
+        // Realizar la conversión
+        float result = _currencyService.ConvertCurrency(user, amount, currencyFromId, currencyToId);
+
+        // Enviar la respuesta con los resultados
+        return Ok(new
         {
-            try
+            Result = result,
+            RemainingConversions = user.Subscription.AllowedAttempts == int.MaxValue
+                ? "Unlimited"
+                : (user.Subscription.AllowedAttempts - user.Attempts).ToString()
+        });
+    }
+    catch (Exception ex)
+    {
+        if (ex.Message.Contains("No tienes intentos restantes"))
+            return BadRequest(new
             {
-                // Obtener el ID del usuario autenticado
-                int userId = int.Parse(User.Claims.First(x => x.Type.Contains("nameidentifier"))!.Value);
-                User user = _context.Users.Include(u => u.Subscription).SingleOrDefault(u => u.UserId == userId);
+                Error = ex.Message,
+                Action = "Por favor, cambia a un plan superior para continuar usando el servicio."
+            });
 
-                if (user is null)
-                    return Unauthorized("Usuario no encontrado.");
-
-                // Si el usuario tiene el plan Free y no tiene intentos disponibles, establecer a 10 intentos
-                if (user.SubscriptionId == 1 && user.TotalConversions == 0)
-                {
-                    user.TotalConversions = 10; // El plan Free tiene 10 conversiones disponibles
-                    _context.SaveChanges();
-                }
-
-                if (amount <= 0)
-                    return BadRequest("La cantidad debe ser mayor que 0.");
-
-                if (toConvert.ICfromConvert <= 0 || toConvert.ICtoConvert <= 0)
-                    return BadRequest("Las tasas de conversión no pueden ser cero o negativas.");
-
-
-                // Validar intentos restantes
-                if (user.TotalConversions <= 0)
-                    return BadRequest("No tienes intentos restantes. Cambia de plan para obtener más.");
-
-                // Realizar la conversión
-                float result = _currencyService.ConvertCurrency(user, amount, toConvert);
-
-                // Restar un intento y guardar cambios
-                user.TotalConversions -= 1;
-                _context.SaveChanges();
-
-                return Ok(new
-                {
-                    Result = result,
-                    RemainingConversions = user.TotalConversions
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Error en la conversión: {ex.Message}");
-            }
-        }
+        return BadRequest($"Error en la conversión: {ex.Message}");
+    }
+}
 
 
 
         [HttpPost("create")]
-        public IActionResult CreateCurrency(CreateAndUpdateCurrencyDto dto)
+        public IActionResult CreateCurrency([FromBody] CreateAndUpdateCurrencyDto dto)
         {
-            int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))!.Value);
-
             try
             {
+                int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))!.Value);
                 _currencyService.CreateCurrency(userId, dto);
                 return Ok("Currency created successfully.");
             }
@@ -194,13 +157,12 @@ namespace CurrencyConvert.Controllers
             }
         }
 
-
         [HttpPut("edit/{currencyId}")]
         public IActionResult UpdateCurrency(int currencyId, [FromBody] CreateAndUpdateCurrencyDto dto)
         {
             try
             {
-                _currencyService.UpdateCurrency(currencyId, dto);  // Actualiza la moneda pasando el currencyId y el DTO
+                _currencyService.UpdateCurrency(currencyId, dto);
                 return Ok("Currency edited successfully.");
             }
             catch (Exception ex)
@@ -214,7 +176,7 @@ namespace CurrencyConvert.Controllers
         {
             try
             {
-                _currencyService.DeleteCurrency(currencyId);  // Elimina la moneda pasando solo el currencyId
+                _currencyService.DeleteCurrency(currencyId);
                 return Ok("Currency deleted successfully.");
             }
             catch (Exception ex)
@@ -224,33 +186,16 @@ namespace CurrencyConvert.Controllers
         }
 
         [HttpPost("favorite")]
-        public IActionResult AddFavoriteCurrency(AddFavoriteDto dto)
+        public IActionResult AddFavoriteCurrency([FromBody] AddFavoriteDto dto)
         {
-            int userId = int.Parse(User.Claims.First(x => x.Type.Contains("nameidentifier"))!.Value);
-
             try
             {
-                // Verificamos si la moneda ya está en favoritos y la agregamos si no lo está
-                var existingFavorite = _context.FavoriteCurrencies
-                    .FirstOrDefault(fc => fc.UserId == userId && fc.Legend == dto.Legend);
+                var currency = _context.Currencies.FirstOrDefault(c => c.CurrencyId == dto.CurrencyId);
+                if (currency == null)
+                 throw new Exception("Currency not found.");
 
-                if (existingFavorite != null)
-                {
-                    return BadRequest("This currency is already in your favorites.");
-                }
-
-                // Si la moneda no está en favoritos, la creamos y la agregamos
-                FavoriteCurrency newFavorite = new FavoriteCurrency()
-                {
-                    Legend = dto.Legend,
-                    Symbol = dto.Symbol,
-                    IC = dto.IC,
-                    UserId = userId
-                };
-
-                _context.FavoriteCurrencies.Add(newFavorite);
-                _context.SaveChanges();
-
+                int userId = int.Parse(User.Claims.First(x => x.Type.Contains("nameidentifier"))!.Value);
+                _currencyService.AddFavoriteCurrency(userId, dto);
                 return Ok("Favorite currency added successfully.");
             }
             catch (Exception ex)

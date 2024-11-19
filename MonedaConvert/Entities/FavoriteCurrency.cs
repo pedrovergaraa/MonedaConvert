@@ -8,14 +8,12 @@ public class FavoriteCurrency
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int FavoriteCurrencyId { get; set; }
 
-    public string? Legend { get; set; }
-
-    public string? Symbol { get; set; }
-
-    public float IC { get; set; }
+    [ForeignKey("CurrencyId")]
+    public Currency? Currency { get; set; }
+    public int CurrencyId { get; set; }
 
     [ForeignKey("UserId")]
     public User? User { get; set; }
-
-    public int UserId { get; set; }
+    public int? UserId { get; set; }
 }
+

@@ -3,6 +3,7 @@ using System;
 using CurrencyConvert.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MonedaConvert.Migrations
 {
     [DbContext(typeof(CurrencyContext))]
-    partial class CurrencyContextModelSnapshot : ModelSnapshot
+    [Migration("20241120221228_AddInitialCurrencies")]
+    partial class AddInitialCurrencies
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.16");
@@ -48,65 +51,49 @@ namespace MonedaConvert.Migrations
                         new
                         {
                             CurrencyId = 1,
-                            IC = 0.005f,
-                            IsDefault = false,
-                            Legend = "ARS",
-                            Symbol = "$"
-                        },
-                        new
-                        {
-                            CurrencyId = 2,
                             IC = 1f,
-                            IsDefault = false,
+                            IsDefault = true,
                             Legend = "USD",
                             Symbol = "$"
                         },
                         new
                         {
-                            CurrencyId = 3,
-                            IC = 1.1f,
+                            CurrencyId = 2,
+                            IC = 1.09f,
                             IsDefault = false,
                             Legend = "EUR",
                             Symbol = "€"
                         },
                         new
                         {
-                            CurrencyId = 4,
-                            IC = 1.3f,
+                            CurrencyId = 3,
+                            IC = 0.8f,
                             IsDefault = false,
                             Legend = "GBP",
                             Symbol = "£"
                         },
                         new
                         {
-                            CurrencyId = 5,
-                            IC = 0.007f,
+                            CurrencyId = 4,
+                            IC = 110f,
                             IsDefault = false,
                             Legend = "JPY",
                             Symbol = "¥"
                         },
                         new
                         {
+                            CurrencyId = 5,
+                            IC = 0.043f,
+                            IsDefault = false,
+                            Legend = "KC",
+                            Symbol = "kc"
+                        },
+                        new
+                        {
                             CurrencyId = 6,
-                            IC = 0.75f,
+                            IC = 0.002f,
                             IsDefault = false,
-                            Legend = "CAD",
-                            Symbol = "$"
-                        },
-                        new
-                        {
-                            CurrencyId = 7,
-                            IC = 0.72f,
-                            IsDefault = false,
-                            Legend = "AUD",
-                            Symbol = "$"
-                        },
-                        new
-                        {
-                            CurrencyId = 8,
-                            IC = 1.05f,
-                            IsDefault = false,
-                            Legend = "CHF",
+                            Legend = "ARS",
                             Symbol = "$"
                         });
                 });

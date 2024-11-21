@@ -6,7 +6,7 @@
         public string Email { get; set; }
         public int? SubscriptionId { get; set; }
         public List<CurrencyDto>? Currencies { get; set; }
-        public List<AddFavoriteDto>? FavoriteCurrencies { get; set; }
+        public List<MarkFavoriteDto>? FavoriteCurrencies { get; set; }
     }
 
 }

@@ -7,5 +7,6 @@
         public string Symbol { get; set; }
         public float IC { get; set; }
 
+        public bool IsFavorite { get; set; }
     }
 }

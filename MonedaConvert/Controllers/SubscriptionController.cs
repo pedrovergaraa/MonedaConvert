@@ -1,4 +1,5 @@
 ﻿using CurrencyConvert.Models.Dtos;
+using CurrencyConvert.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 [ApiController]
 [Authorize]
 public class SubscriptionController : ControllerBase
+
 {
     private readonly SubscriptionService _subscriptionService;
 
@@ -53,13 +55,12 @@ public class SubscriptionController : ControllerBase
         }
     }
 
-
-    [HttpPost("change")]
-    public IActionResult ChangeSubscription(ChangeSubscriptionDto dto)
+    [HttpPut("updateSubscription")]
+    public IActionResult UpdateSubscription([FromBody] ActivateSubscriptionDto dto)
     {
-        if (dto == null || dto.SubscriptionId <= 0)
+        if (!ModelState.IsValid)
         {
-            return BadRequest("Invalid subscription data provided.");
+            return BadRequest(ModelState);
         }
 
         try
@@ -67,18 +68,19 @@ public class SubscriptionController : ControllerBase
             var userIdClaim = HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"));
             if (userIdClaim == null)
             {
-                return Unauthorized("User ID claim not found.");
+                return Unauthorized("User ID not found.");
             }
 
-            int userId = Int32.Parse(userIdClaim.Value);
-            _subscriptionService.ChangeUserSubscription(userId, dto.SubscriptionId);
+            int userId = int.Parse(userIdClaim.Value);
+            _subscriptionService.UpdateUserSubscription(userId, dto);
 
-            return Ok("Subscription updated successfully");
+            return Ok(new { Message = "Subscription updated successfully!" });
         }
         catch (Exception ex)
         {
-            return BadRequest($"Error: {ex.Message}");
+            return BadRequest(new { Error = ex.Message });
         }
     }
+
 
 }

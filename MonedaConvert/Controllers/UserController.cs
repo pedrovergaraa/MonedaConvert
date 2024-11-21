@@ -76,7 +76,7 @@ namespace CurrencyConvert.Controllers
                     Symbol = c.Symbol,
                     IC = c.IC
                 }).ToList(),
-                FavoriteCurrencies = user.FavoriteCurrencies?.Select(f => new AddFavoriteDto
+                FavoriteCurrencies = user.FavoriteCurrencies?.Select(f => new MarkFavoriteDto
                 {
                     CurrencyId = f.CurrencyId
                 }).ToList()
@@ -104,7 +104,7 @@ namespace CurrencyConvert.Controllers
                     Symbol = c.Symbol,
                     IC = c.IC
                 }).ToList(),
-                FavoriteCurrencies = u.FavoriteCurrencies?.Select(f => new AddFavoriteDto
+                FavoriteCurrencies = u.FavoriteCurrencies?.Select(f => new MarkFavoriteDto
                 {
                     CurrencyId = f.CurrencyId
                 }).ToList()

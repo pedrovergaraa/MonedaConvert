@@ -1,5 +1,6 @@
 ﻿using CurrencyConvert.Data;
 using CurrencyConvert.Entities;
+using CurrencyConvert.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 public class SubscriptionService
@@ -29,23 +30,33 @@ public class SubscriptionService
         return user ?? throw new Exception("User does not have an active subscription.");
     }
 
-    public void ChangeUserSubscription(int userId, int subscriptionId)
+    public void UpdateUserSubscription(int userId, ActivateSubscriptionDto dto)
     {
-        var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
-        var subscription = _context.Subscriptions.Find(subscriptionId);
-
+        // Buscar al usuario en la base de datos
+        var user = _context.Users.Find(userId);
         if (user == null)
+        {
             throw new Exception("User not found.");
+        }
 
-        if (subscription == null)
+        // Buscar la nueva suscripción
+        var newSubscription = _context.Subscriptions.Find(dto.NewSubscriptionId);
+        if (newSubscription == null)
+        {
             throw new Exception("Subscription not found.");
+        }
 
-        if (user.SubscriptionId == subscriptionId)
+        // Validar si ya tiene la misma suscripción
+        if (user.SubscriptionId == newSubscription.SubId)
+        {
             throw new Exception("User already has this subscription.");
+        }
 
-        // Cambiar la suscripción
-        user.SubscriptionId = subscriptionId;
+        // Actualizar la suscripción del usuario
+        user.SubscriptionId = newSubscription.SubId;
+        user.Attempts = newSubscription.AllowedAttempts; 
         _context.SaveChanges();
     }
+
 
 }

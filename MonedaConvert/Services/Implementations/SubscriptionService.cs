@@ -54,7 +54,7 @@ public class SubscriptionService
 
         // Actualizar la suscripción del usuario
         user.SubscriptionId = newSubscription.SubId;
-        user.Attempts = newSubscription.AllowedAttempts; 
+        user.Attempts = newSubscription.Conversions; 
         _context.SaveChanges();
     }
 

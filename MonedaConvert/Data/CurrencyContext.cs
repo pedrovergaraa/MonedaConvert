@@ -39,84 +39,92 @@ namespace CurrencyConvert.Data
                 .HasForeignKey(fc => fc.CurrencyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            {
-                Currency pesoArgentino = new Currency()
-                {
-                    CurrencyId = 1,
-                    Legend = "ARS",
-                    Symbol = "$",
-                    IC = 0.005f
-                };
-                Currency USDollar = new Currency()
-                {
-                    CurrencyId = 2,
-                    Legend = "USD",
-                    Symbol = "$",
-                    IC = 1f
-                };
-                Currency euro = new Currency()
-                {
-                    CurrencyId = 3,
-                    Legend = "EUR",
-                    Symbol = "€",
-                    IC = 1.1f
-                };
-                Currency britishPound = new Currency()
-                {
-                    CurrencyId = 4,
-                    Legend = "GBP",
-                    Symbol = "£",
-                    IC = 1.3f
-                };
-                Currency japaneseYen = new Currency()
-                {
-                    CurrencyId = 5,
-                    Legend = "JPY",
-                    Symbol = "¥",
-                    IC = 0.007f
-                };
-                Currency canadianDollar = new Currency()
-                {
-                    CurrencyId = 6,
-                    Legend = "CAD",
-                    Symbol = "$",
-                    IC = 0.75f
-                };
                 Currency australianDollar = new Currency()
                 {
-                    CurrencyId = 7,
+                    CurrencyId = 10,
                     Legend = "AUD",
                     Symbol = "$",
-                    IC = 0.72f
+                    IC = 0.72f,
+                    IsDefault = true
                 };
                 Currency swissFranc = new Currency()
                 {
-                    CurrencyId = 8,
+                    CurrencyId = 11,
                     Legend = "CHF",
                     Symbol = "$",
-                    IC = 1.05f
+                    IC = 1.05f,
+                    IsDefault = true
                 };
 
+            {
+                Currency pesoArgentino = new Currency()
+                {
+                    CurrencyId = 12,
+                    Legend = "ARS",
+                    Symbol = "$",
+                    IC = 0.005f,
+                    IsDefault = true
+                };
+                Currency USDollar = new Currency()
+                {
+                    CurrencyId = 13,
+                    Legend = "USD",
+                    Symbol = "$",
+                    IC = 1f,
+                    IsDefault = true
+                };
+                Currency euro = new Currency()
+                {
+                    CurrencyId = 14,
+                    Legend = "EUR",
+                    Symbol = "€",
+                    IC = 1.1f,
+                    IsDefault = true
+                };
+                Currency britishPound = new Currency()
+                {
+                    CurrencyId = 15,
+                    Legend = "GBP",
+                    Symbol = "£",
+                    IC = 1.3f,
+                    IsDefault = true
+                };
+                Currency japaneseYen = new Currency()
+                {
+                    CurrencyId = 16,
+                    Legend = "JPY",
+                    Symbol = "¥",
+                    IC = 0.007f,
+                    IsDefault = true
+                };
+                Currency canadianDollar = new Currency()
+                {
+                    CurrencyId = 17,
+                    Legend = "CAD",
+                    Symbol = "$",
+                    IC = 0.75f,
+                    IsDefault = true
+                };
 
                 Subscription Free = new Subscription()
                 {
-                    SubId = 1,
+                    SubId = 4,
                     Name = "Free",
-                    AllowedAttempts = 10,
+                    Conversions = 10,
                     Price = 0
                 };
                 Subscription Trial = new Subscription()
                 {
-                    SubId = 2,
+                    SubId = 5,
                     Name = "Trial",
-                    AllowedAttempts = 100,
+                    Conversions = 100,
                     Price = 10
                 };
                 Subscription Premium = new Subscription()
                 {
-                    SubId = 3,
+                    SubId = 6,
                     Name = "Premium",
-                    AllowedAttempts = int.MaxValue,
+                    Conversions = int.MaxValue,
                     Price = 15
                 };
 

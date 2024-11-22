@@ -11,7 +11,7 @@ namespace CurrencyConvert.Entities
 
         [Required] 
         public string Name { get; set; } = string.Empty;
-        public int AllowedAttempts { get; set; }
+        public int Conversions { get; set; }
 
         public decimal Price { get; set; }
 

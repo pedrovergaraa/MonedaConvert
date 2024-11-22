@@ -45,7 +45,7 @@ public class SubscriptionController : ControllerBase
             return Ok(new
             {
                 subscription.Name,
-                subscription.AllowedAttempts,
+                subscription.Conversions,
                 subscription.Price
             });
         }

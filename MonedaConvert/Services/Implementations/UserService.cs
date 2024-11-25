@@ -24,29 +24,34 @@ public class UserService
 
         if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
         {
-            return null; // Usuario no válido
+            return null; 
         }
 
         return user;
     }
 
-    public void Create(CreateAndUpdateUserDto dto)
+   public void Create(CreateAndUpdateUserDto dto)
+{
+    if (_context.Users.Any(u => u.Email == dto.Email))
+        throw new InvalidOperationException("Email already in use.");
+
+    var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+
+    var subscription = _context.Subscriptions.Find(dto.SubscriptionId) ?? throw new InvalidOperationException("Invalid subscription ID.");
+
+    var user = new User
     {
-        if (_context.Users.Any(u => u.Email == dto.Email))
-            throw new InvalidOperationException("Email already in use.");
+        Email = dto.Email,
+        Password = hashedPassword,
+        SubscriptionId = subscription.SubId,
+        Attempts = subscription.Conversions, 
+        Currencies = new List<Currency>(),  
+        FavoriteCurrencies = new List<FavoriteCurrency>() 
+    };
 
-        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-
-        var user = new User
-        {
-            Email = dto.Email,
-            Password = hashedPassword,
-            SubscriptionId = 1 // Default to Free subscription if not specified
-        };
-
-        _context.Users.Add(user);
-        _context.SaveChanges();
-    }
+    _context.Users.Add(user);
+    _context.SaveChanges();
+}
 
     public User GetUserById(int userId)
     {
@@ -68,7 +73,6 @@ public class UserService
         if (!string.IsNullOrEmpty(dto.Password))
             user.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
-        // Update subscription if specified, otherwise keep current one.
         user.SubscriptionId = dto.SubscriptionId ?? user.SubscriptionId;
 
         _context.SaveChanges();
@@ -77,9 +81,9 @@ public class UserService
         public List<User> GetAllUsers()
         {
             return _context.Users
-                           .Include(u => u.Currencies) // Carga de las monedas relacionadas con el usuario
-                           .Include(u => u.FavoriteCurrencies) // Carga de los favoritos
-                               .ThenInclude(fc => fc.Currency) // Carga de la moneda relacionada en FavoriteCurrency
+                           .Include(u => u.Currencies) 
+                           .Include(u => u.FavoriteCurrencies) 
+                               .ThenInclude(fc => fc.Currency) 
                            .ToList();
         }
 

@@ -35,6 +35,21 @@ namespace CurrencyConvert.Controllers
                 return BadRequest($"Error: {ex.Message}");
             }
         }
+        [HttpGet("user")]
+        public IActionResult GetUserCurrencies()
+        {
+            try
+            {
+                var userId = int.Parse(HttpContext.User.Claims.First(c => c.Type.Contains("nameidentifier")).Value);
+                var userCurrencies = _currencyService.GetUserCurrencies(userId);
+                return Ok(userCurrencies);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
 
         [HttpGet("{currencyId}")]
         public IActionResult GetCurrencyById(int currencyId)
@@ -130,7 +145,7 @@ namespace CurrencyConvert.Controllers
 
             return Ok(new
             {
-                RemainingConversions = user.Attempts // Intentos restantes
+                RemainingConversions = user.Attempts 
             });
         }
 

@@ -12,52 +12,62 @@ public class SubscriptionService
         _context = context;
     }
 
-    // Obtener todas las suscripciones
     public List<Subscription> GetAllSubscriptions()
     {
         return _context.Subscriptions.AsNoTracking().ToList();
     }
 
-    // Obtener la suscripción de un usuario
     public Subscription GetUserSubscription(int userId)
     {
-        var subscription = _context.Users
-            .Include(u => u.Subscription) // Cargar la suscripción relacionada
-            .Where(u => u.UserId == userId)
-            .Select(u => u.Subscription)
-            .FirstOrDefault();
-
-        if (subscription == null)
+        if (userId <= 0)
         {
-            throw new Exception("User does not have an active subscription.");
+            throw new Exception("Invalid userId.");
         }
 
-        return subscription;
+        var user = _context.Users
+            .Include(u => u.Subscription)
+            .FirstOrDefault(u => u.UserId == userId);
+
+        if (user?.Subscription == null)
+        {
+            throw new Exception("User or subscription not found.");
+        }
+
+        return user.Subscription;
     }
 
-    // Actualizar la suscripción de un usuario
     public void UpdateUserSubscription(int userId, ActivateSubscriptionDto dto)
     {
-        var user = _context.Users.Include(u => u.Subscription).FirstOrDefault(u => u.UserId == userId);
-        if (user == null)
+        using var transaction = _context.Database.BeginTransaction();
+        try
         {
-            throw new Exception("User not found.");
-        }
+            var user = _context.Users.Include(u => u.Subscription).FirstOrDefault(u => u.UserId == userId);
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
 
-        var newSubscription = _context.Subscriptions.Find(dto.NewSubscriptionId);
-        if (newSubscription == null)
+            var newSubscription = _context.Subscriptions.Find(dto.NewSubscriptionId);
+            if (newSubscription == null)
+            {
+                throw new Exception("Subscription not found.");
+            }
+
+            if (user.SubscriptionId == newSubscription.SubId)
+            {
+                throw new Exception("User already has this subscription.");
+            }
+
+            user.SubscriptionId = newSubscription.SubId;
+            user.Attempts = newSubscription.Conversions == -1 ? int.MaxValue : newSubscription.Conversions;
+
+            _context.SaveChanges();
+            transaction.Commit();
+        }
+        catch
         {
-            throw new Exception("Subscription not found.");
+            transaction.Rollback();
+            throw;
         }
-
-        if (user.SubscriptionId == newSubscription.SubId)
-        {
-            throw new Exception("User already has this subscription.");
-        }
-
-        user.SubscriptionId = newSubscription.SubId;
-        user.Attempts = newSubscription.Conversions;
-
-        _context.SaveChanges();
     }
 }

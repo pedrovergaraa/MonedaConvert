@@ -34,7 +34,7 @@ namespace CurrencyConvert.Controllers
                     Message = "Autenticación exitosa",
                     UserId = user.UserId,
                     Email = user.Email,
-                    SubscriptionId = user.SubscriptionId ?? 1 // Default to Free if not provided
+                    SubscriptionId = user.SubscriptionId ?? 1 
                 });
             }
             catch (Exception ex)

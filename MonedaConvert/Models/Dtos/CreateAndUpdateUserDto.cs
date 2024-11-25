@@ -13,7 +13,7 @@ namespace CurrencyConvert.Models.Dtos
         [MinLength(4, ErrorMessage = "La contraseña debe tener al menos 4 caracteres")]
         public string Password { get; set; }
 
-        public int? SubscriptionId { get; set; }
+        public int? SubscriptionId { get; set; } = 1;
     }
 
 }

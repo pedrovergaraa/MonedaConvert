@@ -30,6 +30,22 @@ namespace CurrencyConvert.Services.Implementations
 
         }
 
+        public List<CurrencyDto> GetUserCurrencies(int userId)
+        {
+            var userCurrencies = _context.Currencies
+                .Where(c => c.UserId == userId || c.UserId == null) // Monedas del usuario y por defecto
+                .Select(c => new CurrencyDto
+                {
+                    CurrencyId = c.CurrencyId,
+                    Legend = c.Legend,
+                    Symbol = c.Symbol,
+                    IC = c.IC
+                })
+                .ToList();
+
+            return userCurrencies;
+        }
+
         public Currency GetCurrencyById(int currencyId)
         {
             return _context.Currencies.Find(currencyId);
@@ -37,20 +53,18 @@ namespace CurrencyConvert.Services.Implementations
 
         public float ConvertCurrency(int userId, int fromCurrencyId, int toCurrencyId, float amount)
         {
-            // Obtener el usuario junto con su suscripción
             var user = _context.Users.Include(u => u.Subscription).FirstOrDefault(u => u.UserId == userId);
             if (user == null || user.Subscription == null)
             {
                 throw new Exception("User or subscription not found.");
             }
 
-            // Validar que el usuario tenga intentos disponibles
             if (user.Attempts <= 0)
             {
                 throw new Exception("You have no remaining conversion attempts.");
             }
 
-            // Buscar las monedas, incluyendo las predeterminadas
+            // Validar acceso a las monedas
             var fromCurrency = _context.Currencies
                 .FirstOrDefault(c => c.CurrencyId == fromCurrencyId && (c.UserId == userId || c.UserId == null));
             var toCurrency = _context.Currencies
@@ -66,19 +80,13 @@ namespace CurrencyConvert.Services.Implementations
                 throw new Exception("Invalid conversion rate.");
             }
 
-            // Realizar la conversión
             var conversionRate = amount * fromCurrency.IC / toCurrency.IC;
 
-            // Restar un intento al usuario
             user.Attempts -= 1;
-
-            // Guardar los cambios en la base de datos
             _context.SaveChanges();
 
             return conversionRate;
         }
-
-
 
 
 

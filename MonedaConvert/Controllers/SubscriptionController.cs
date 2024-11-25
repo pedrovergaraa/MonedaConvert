@@ -30,32 +30,16 @@ public class SubscriptionController : ControllerBase
             return BadRequest($"Error: {ex.Message}");
         }
     }
+
     [HttpGet("userSub/{userId}")]
     public IActionResult GetUserSubscription(int userId)
     {
-        try
-        {
-            if (userId <= 0)
-            {
-                return BadRequest("Invalid user ID.");
-            }
-
-            var subscription = _subscriptionService.GetUserSubscription(userId);
-
-            return Ok(new
-            {
-                subscription.Name,
-                subscription.Conversions,
-                subscription.Price
-            });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest($"Error: {ex.Message}");
-        }
+        var subscription = _subscriptionService.GetUserSubscription(userId);
+        return Ok(subscription);
     }
 
-    [HttpPut("updateSubscription")]
+
+    [HttpPut("update")]
     public IActionResult UpdateSubscription([FromBody] ActivateSubscriptionDto dto)
     {
         if (!ModelState.IsValid)

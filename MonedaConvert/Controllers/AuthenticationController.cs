@@ -26,23 +26,20 @@ namespace CurrencyConvert.Controllers
         {
             try
             {
-                // Validar el usuario
+
                 var user = _userService.ValidateUser(authenticationRequestBody);
                 if (user is null)
                     return Unauthorized();
 
-                // Crear clave de seguridad
                 var securityPassword = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config["Authentication:Key"]));
                 var credentials = new SigningCredentials(securityPassword, SecurityAlgorithms.HmacSha256);
 
-                // Crear los claims para el token
                 var claimsForToken = new List<Claim>
-        {
-            new Claim("sub", user.UserId.ToString()), // Asumimos que User tiene UserId
-            new Claim("Email", user.Email)
-        };
+                {
+                    new Claim("sub", user.UserId.ToString()),
+                    new Claim("Email", user.Email)
+                };
 
-                // Generar el JWT
                 var jwtSecurityToken = new JwtSecurityToken(
                     _config["Authentication:Issuer"],
                     _config["Authentication:Audience"],

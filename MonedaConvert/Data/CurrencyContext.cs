@@ -14,12 +14,11 @@ namespace CurrencyConvert.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configuración de relaciones
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Subscription)
                 .WithMany(s => s.Users)
                 .HasForeignKey(u => u.SubscriptionId)
-                .OnDelete(DeleteBehavior.Restrict); // Evita la eliminación en cascada accidental
+                .OnDelete(DeleteBehavior.Restrict); 
 
             modelBuilder.Entity<Currency>()
                 .HasOne(c => c.User)

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MonedaConvert.Migrations
 {
     [DbContext(typeof(CurrencyContext))]
-    [Migration("20241122220616_AddAllowedAttemptsToSubscription")]
-    partial class AddAllowedAttemptsToSubscription
+    [Migration("20241123142130_InitialCreate2")]
+    partial class InitialCreate2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,7 +50,7 @@ namespace MonedaConvert.Migrations
                     b.HasData(
                         new
                         {
-                            CurrencyId = 12,
+                            CurrencyId = 1,
                             IC = 0.005f,
                             IsDefault = true,
                             Legend = "ARS",
@@ -58,7 +58,7 @@ namespace MonedaConvert.Migrations
                         },
                         new
                         {
-                            CurrencyId = 13,
+                            CurrencyId = 2,
                             IC = 1f,
                             IsDefault = true,
                             Legend = "USD",
@@ -66,7 +66,7 @@ namespace MonedaConvert.Migrations
                         },
                         new
                         {
-                            CurrencyId = 14,
+                            CurrencyId = 3,
                             IC = 1.1f,
                             IsDefault = true,
                             Legend = "EUR",
@@ -74,7 +74,7 @@ namespace MonedaConvert.Migrations
                         },
                         new
                         {
-                            CurrencyId = 15,
+                            CurrencyId = 4,
                             IC = 1.3f,
                             IsDefault = true,
                             Legend = "GBP",
@@ -82,7 +82,7 @@ namespace MonedaConvert.Migrations
                         },
                         new
                         {
-                            CurrencyId = 16,
+                            CurrencyId = 5,
                             IC = 0.007f,
                             IsDefault = true,
                             Legend = "JPY",
@@ -90,7 +90,7 @@ namespace MonedaConvert.Migrations
                         },
                         new
                         {
-                            CurrencyId = 17,
+                            CurrencyId = 6,
                             IC = 0.75f,
                             IsDefault = true,
                             Legend = "CAD",
@@ -98,7 +98,7 @@ namespace MonedaConvert.Migrations
                         },
                         new
                         {
-                            CurrencyId = 10,
+                            CurrencyId = 7,
                             IC = 0.72f,
                             IsDefault = true,
                             Legend = "AUD",
@@ -106,7 +106,7 @@ namespace MonedaConvert.Migrations
                         },
                         new
                         {
-                            CurrencyId = 11,
+                            CurrencyId = 8,
                             IC = 1.05f,
                             IsDefault = true,
                             Legend = "CHF",
@@ -137,21 +137,21 @@ namespace MonedaConvert.Migrations
                     b.HasData(
                         new
                         {
-                            SubId = 4,
+                            SubId = 1,
                             Conversions = 10,
                             Name = "Free",
                             Price = 0m
                         },
                         new
                         {
-                            SubId = 5,
+                            SubId = 2,
                             Conversions = 100,
                             Name = "Trial",
                             Price = 10m
                         },
                         new
                         {
-                            SubId = 6,
+                            SubId = 3,
                             Conversions = 2147483647,
                             Name = "Premium",
                             Price = 15m

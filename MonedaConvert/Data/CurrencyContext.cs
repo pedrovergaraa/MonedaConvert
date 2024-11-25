@@ -39,97 +39,97 @@ namespace CurrencyConvert.Data
                 .HasForeignKey(fc => fc.CurrencyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-                Currency australianDollar = new Currency()
-                {
-                    CurrencyId = 10,
-                    Legend = "AUD",
-                    Symbol = "$",
-                    IC = 0.72f,
-                    IsDefault = true
-                };
-                Currency swissFranc = new Currency()
-                {
-                    CurrencyId = 11,
-                    Legend = "CHF",
-                    Symbol = "$",
-                    IC = 1.05f,
-                    IsDefault = true
-                };
-
             {
                 Currency pesoArgentino = new Currency()
                 {
-                    CurrencyId = 12,
+                    CurrencyId = 11,
                     Legend = "ARS",
                     Symbol = "$",
                     IC = 0.005f,
-                    IsDefault = true
+                    IsDefault = true,
                 };
                 Currency USDollar = new Currency()
                 {
-                    CurrencyId = 13,
+                    CurrencyId = 12,
                     Legend = "USD",
                     Symbol = "$",
                     IC = 1f,
-                    IsDefault = true
+                    IsDefault = true,
                 };
                 Currency euro = new Currency()
                 {
-                    CurrencyId = 14,
+                    CurrencyId = 13,
                     Legend = "EUR",
                     Symbol = "€",
                     IC = 1.1f,
-                    IsDefault = true
+                    IsDefault = true,
                 };
                 Currency britishPound = new Currency()
                 {
-                    CurrencyId = 15,
+                    CurrencyId = 14,
                     Legend = "GBP",
                     Symbol = "£",
                     IC = 1.3f,
-                    IsDefault = true
+                    IsDefault = true,
                 };
                 Currency japaneseYen = new Currency()
                 {
-                    CurrencyId = 16,
+                    CurrencyId = 15,
                     Legend = "JPY",
                     Symbol = "¥",
                     IC = 0.007f,
-                    IsDefault = true
+                    IsDefault = true,
                 };
                 Currency canadianDollar = new Currency()
                 {
-                    CurrencyId = 17,
+                    CurrencyId = 16,
                     Legend = "CAD",
                     Symbol = "$",
                     IC = 0.75f,
-                    IsDefault = true
+                    IsDefault = true,
                 };
+                Currency australianDollar = new Currency()
+                {
+                    CurrencyId = 17,
+                    Legend = "AUD",
+                    Symbol = "$",
+                    IC = 0.72f,
+                    IsDefault = true,
+                };
+                Currency swissFranc = new Currency()
+                {
+                    CurrencyId = 18,
+                    Legend = "CHF",
+                    Symbol = "$",
+                    IC = 1.05f,
+                    IsDefault = true,
+                };
+
 
                 Subscription Free = new Subscription()
                 {
-                    SubId = 4,
+                    SubId = 1,
                     Name = "Free",
                     Conversions = 10,
                     Price = 0
                 };
                 Subscription Trial = new Subscription()
                 {
-                    SubId = 5,
+                    SubId = 2,
                     Name = "Trial",
                     Conversions = 100,
                     Price = 10
                 };
                 Subscription Premium = new Subscription()
                 {
-                    SubId = 6,
+                    SubId = 3,
                     Name = "Premium",
                     Conversions = int.MaxValue,
                     Price = 15
                 };
 
 
-                
+
 
 
                 modelBuilder.Entity<Currency>().HasData(

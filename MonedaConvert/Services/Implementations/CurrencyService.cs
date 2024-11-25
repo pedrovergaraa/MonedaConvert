@@ -37,31 +37,47 @@ namespace CurrencyConvert.Services.Implementations
 
         public float ConvertCurrency(int userId, int fromCurrencyId, int toCurrencyId, float amount)
         {
-            // Verificar que ambas monedas pertenezcan al usuario
-            var fromCurrency = _context.Currencies.FirstOrDefault(c => c.CurrencyId == fromCurrencyId && c.UserId == userId);
-            var toCurrency = _context.Currencies.FirstOrDefault(c => c.CurrencyId == toCurrencyId && c.UserId == userId);
+            // Obtener el usuario junto con su suscripción
+            var user = _context.Users.Include(u => u.Subscription).FirstOrDefault(u => u.UserId == userId);
+            if (user == null || user.Subscription == null)
+            {
+                throw new Exception("User or subscription not found.");
+            }
+
+            // Validar que el usuario tenga intentos disponibles
+            if (user.Attempts <= 0)
+            {
+                throw new Exception("You have no remaining conversion attempts.");
+            }
+
+            // Buscar las monedas, incluyendo las predeterminadas
+            var fromCurrency = _context.Currencies
+                .FirstOrDefault(c => c.CurrencyId == fromCurrencyId && (c.UserId == userId || c.UserId == null));
+            var toCurrency = _context.Currencies
+                .FirstOrDefault(c => c.CurrencyId == toCurrencyId && (c.UserId == userId || c.UserId == null));
 
             if (fromCurrency == null || toCurrency == null)
             {
-                throw new Exception("One or both currencies not found or do not belong to the user.");
+                throw new Exception("One or both currencies not found or not accessible to the user.");
             }
 
-            // Verificar que las tasas de conversión sean válidas
-            if (fromCurrency.IC <= 0)
+            if (fromCurrency.IC <= 0 || toCurrency.IC <= 0)
             {
-                throw new Exception($"Invalid conversion rate for the source currency (CurrencyId: {fromCurrencyId}).");
+                throw new Exception("Invalid conversion rate.");
             }
 
-            if (toCurrency.IC <= 0)
-            {
-                throw new Exception($"Invalid conversion rate for the target currency (CurrencyId: {toCurrencyId}).");
-            }
-
-            // Realizar la conversión usando IC como tasa de cambio
+            // Realizar la conversión
             var conversionRate = amount * fromCurrency.IC / toCurrency.IC;
+
+            // Restar un intento al usuario
+            user.Attempts -= 1;
+
+            // Guardar los cambios en la base de datos
+            _context.SaveChanges();
 
             return conversionRate;
         }
+
 
 
 

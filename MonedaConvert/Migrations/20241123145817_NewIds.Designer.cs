@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MonedaConvert.Migrations
 {
     [DbContext(typeof(CurrencyContext))]
-    [Migration("20241120222430_AddDefaultCurrencies")]
-    partial class AddDefaultCurrencies
+    [Migration("20241123145817_NewIds")]
+    partial class NewIds
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,65 +50,65 @@ namespace MonedaConvert.Migrations
                     b.HasData(
                         new
                         {
-                            CurrencyId = 1,
+                            CurrencyId = 11,
                             IC = 0.005f,
-                            IsDefault = false,
+                            IsDefault = true,
                             Legend = "ARS",
                             Symbol = "$"
                         },
                         new
                         {
-                            CurrencyId = 2,
+                            CurrencyId = 12,
                             IC = 1f,
-                            IsDefault = false,
+                            IsDefault = true,
                             Legend = "USD",
                             Symbol = "$"
                         },
                         new
                         {
-                            CurrencyId = 3,
+                            CurrencyId = 13,
                             IC = 1.1f,
-                            IsDefault = false,
+                            IsDefault = true,
                             Legend = "EUR",
                             Symbol = "€"
                         },
                         new
                         {
-                            CurrencyId = 4,
+                            CurrencyId = 14,
                             IC = 1.3f,
-                            IsDefault = false,
+                            IsDefault = true,
                             Legend = "GBP",
                             Symbol = "£"
                         },
                         new
                         {
-                            CurrencyId = 5,
+                            CurrencyId = 15,
                             IC = 0.007f,
-                            IsDefault = false,
+                            IsDefault = true,
                             Legend = "JPY",
                             Symbol = "¥"
                         },
                         new
                         {
-                            CurrencyId = 6,
+                            CurrencyId = 16,
                             IC = 0.75f,
-                            IsDefault = false,
+                            IsDefault = true,
                             Legend = "CAD",
                             Symbol = "$"
                         },
                         new
                         {
-                            CurrencyId = 7,
+                            CurrencyId = 17,
                             IC = 0.72f,
-                            IsDefault = false,
+                            IsDefault = true,
                             Legend = "AUD",
                             Symbol = "$"
                         },
                         new
                         {
-                            CurrencyId = 8,
+                            CurrencyId = 18,
                             IC = 1.05f,
-                            IsDefault = false,
+                            IsDefault = true,
                             Legend = "CHF",
                             Symbol = "$"
                         });
@@ -120,7 +120,7 @@ namespace MonedaConvert.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AllowedAttempts")
+                    b.Property<int>("Conversions")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -138,21 +138,21 @@ namespace MonedaConvert.Migrations
                         new
                         {
                             SubId = 1,
-                            AllowedAttempts = 10,
+                            Conversions = 10,
                             Name = "Free",
                             Price = 0m
                         },
                         new
                         {
                             SubId = 2,
-                            AllowedAttempts = 100,
+                            Conversions = 100,
                             Name = "Trial",
                             Price = 10m
                         },
                         new
                         {
                             SubId = 3,
-                            AllowedAttempts = 2147483647,
+                            Conversions = 2147483647,
                             Name = "Premium",
                             Price = 15m
                         });

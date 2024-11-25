@@ -119,6 +119,21 @@ namespace CurrencyConvert.Controllers
             }
         }
 
+        [HttpGet("remaining-conversions/{userId}")]
+        public IActionResult GetRemainingConversions(int userId)
+        {
+            var user = _context.Users.Include(u => u.Subscription).FirstOrDefault(u => u.UserId == userId);
+            if (user == null || user.Subscription == null)
+            {
+                return NotFound("User or subscription not found.");
+            }
+
+            return Ok(new
+            {
+                RemainingConversions = user.Attempts // Intentos restantes
+            });
+        }
+
 
 
         [HttpPost("create")]

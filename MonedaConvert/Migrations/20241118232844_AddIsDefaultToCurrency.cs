@@ -43,47 +43,6 @@ namespace MonedaConvert.Migrations
                 nullable: false,
                 defaultValue: false);
 
-            migrationBuilder.UpdateData(
-                table: "Currencies",
-                keyColumn: "CurrencyId",
-                keyValue: 1,
-                column: "IsDefault",
-                value: true);
-
-            migrationBuilder.UpdateData(
-                table: "Currencies",
-                keyColumn: "CurrencyId",
-                keyValue: 2,
-                column: "IsDefault",
-                value: false);
-
-            migrationBuilder.UpdateData(
-                table: "Currencies",
-                keyColumn: "CurrencyId",
-                keyValue: 3,
-                column: "IsDefault",
-                value: false);
-
-            migrationBuilder.UpdateData(
-                table: "Currencies",
-                keyColumn: "CurrencyId",
-                keyValue: 4,
-                column: "IsDefault",
-                value: false);
-
-            migrationBuilder.UpdateData(
-                table: "Currencies",
-                keyColumn: "CurrencyId",
-                keyValue: 5,
-                column: "IsDefault",
-                value: false);
-
-            migrationBuilder.UpdateData(
-                table: "Currencies",
-                keyColumn: "CurrencyId",
-                keyValue: 6,
-                column: "IsDefault",
-                value: false);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Currencies_Users_UserId",

@@ -5,7 +5,7 @@
 namespace MonedaConvert.Migrations
 {
     /// <inheritdoc />
-    public partial class SubContextChanges : Migration
+    public partial class PruebaYerror2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

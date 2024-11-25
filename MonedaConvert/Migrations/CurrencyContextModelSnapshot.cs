@@ -47,7 +47,7 @@ namespace MonedaConvert.Migrations
                     b.HasData(
                         new
                         {
-                            CurrencyId = 12,
+                            CurrencyId = 11,
                             IC = 0.005f,
                             IsDefault = true,
                             Legend = "ARS",
@@ -55,7 +55,7 @@ namespace MonedaConvert.Migrations
                         },
                         new
                         {
-                            CurrencyId = 13,
+                            CurrencyId = 12,
                             IC = 1f,
                             IsDefault = true,
                             Legend = "USD",
@@ -63,7 +63,7 @@ namespace MonedaConvert.Migrations
                         },
                         new
                         {
-                            CurrencyId = 14,
+                            CurrencyId = 13,
                             IC = 1.1f,
                             IsDefault = true,
                             Legend = "EUR",
@@ -71,7 +71,7 @@ namespace MonedaConvert.Migrations
                         },
                         new
                         {
-                            CurrencyId = 15,
+                            CurrencyId = 14,
                             IC = 1.3f,
                             IsDefault = true,
                             Legend = "GBP",
@@ -79,7 +79,7 @@ namespace MonedaConvert.Migrations
                         },
                         new
                         {
-                            CurrencyId = 16,
+                            CurrencyId = 15,
                             IC = 0.007f,
                             IsDefault = true,
                             Legend = "JPY",
@@ -87,7 +87,7 @@ namespace MonedaConvert.Migrations
                         },
                         new
                         {
-                            CurrencyId = 17,
+                            CurrencyId = 16,
                             IC = 0.75f,
                             IsDefault = true,
                             Legend = "CAD",
@@ -95,7 +95,7 @@ namespace MonedaConvert.Migrations
                         },
                         new
                         {
-                            CurrencyId = 10,
+                            CurrencyId = 17,
                             IC = 0.72f,
                             IsDefault = true,
                             Legend = "AUD",
@@ -103,7 +103,7 @@ namespace MonedaConvert.Migrations
                         },
                         new
                         {
-                            CurrencyId = 11,
+                            CurrencyId = 18,
                             IC = 1.05f,
                             IsDefault = true,
                             Legend = "CHF",
@@ -134,21 +134,21 @@ namespace MonedaConvert.Migrations
                     b.HasData(
                         new
                         {
-                            SubId = 4,
+                            SubId = 1,
                             Conversions = 10,
                             Name = "Free",
                             Price = 0m
                         },
                         new
                         {
-                            SubId = 5,
+                            SubId = 2,
                             Conversions = 100,
                             Name = "Trial",
                             Price = 10m
                         },
                         new
                         {
-                            SubId = 6,
+                            SubId = 3,
                             Conversions = 2147483647,
                             Name = "Premium",
                             Price = 15m

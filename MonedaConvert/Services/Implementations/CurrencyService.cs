@@ -23,16 +23,16 @@ namespace CurrencyConvert.Services.Implementations
 
         public List<Currency> GetDefaultCurrencies()
         {
-            return _context.Currencies
-    .Where(c => c.UserId == 0 || c.UserId == null)
-    .ToList();
+                return _context.Currencies
+        .Where(c => c.UserId == 0 || c.UserId == null)
+        .ToList();
 
 
         }
         public List<CurrencyDto> GetUserCurrencies(int userId)
         {
             var currencies = _context.Currencies
-                .Where(c => c.UserId == userId || c.IsDefault)
+                .Where(c => c.UserId == userId || c.IsDefault)  
                 .Select(c => new CurrencyDto
                 {
                     CurrencyId = c.CurrencyId,

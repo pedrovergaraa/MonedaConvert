@@ -155,18 +155,23 @@ namespace CurrencyConvert.Controllers
                 RemainingConversions = user.Attempts
             });
         }
-
         [HttpPost("create")]
         public IActionResult CreateCurrency([FromBody] CreateAndUpdateCurrencyDto dto)
         {
             try
             {
+                // Verificar si el modelo es válido
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid data.");
+                }
+
                 _currencyService.CreateCurrency(dto);
                 return Ok("Currency created successfully.");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = ex.Message });
             }
         }
 

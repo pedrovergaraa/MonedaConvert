@@ -29,22 +29,23 @@ namespace CurrencyConvert.Services.Implementations
 
 
         }
-
         public List<CurrencyDto> GetUserCurrencies(int userId)
         {
-            var userCurrencies = _context.Currencies
-                .Where(c => c.UserId == userId || c.UserId == null) // Monedas del usuario y por defecto
+            var currencies = _context.Currencies
+                .Where(c => c.UserId == userId || c.IsDefault)
                 .Select(c => new CurrencyDto
                 {
                     CurrencyId = c.CurrencyId,
                     Legend = c.Legend,
                     Symbol = c.Symbol,
-                    IC = c.IC
-                })
-                .ToList();
+                    IC = c.IC,
+                    IsFavorite = _context.FavoriteCurrencies.Any(fc => fc.CurrencyId == c.CurrencyId && fc.UserId == userId)
+                }).ToList();
 
-            return userCurrencies;
+            return currencies;
         }
+
+
 
         public Currency GetCurrencyById(int currencyId)
         {
@@ -90,19 +91,18 @@ namespace CurrencyConvert.Services.Implementations
 
 
 
-        public void CreateCurrency(int userId, CreateAndUpdateCurrencyDto dto)
+        public void CreateCurrency(CreateAndUpdateCurrencyDto dto)
         {
-            if (_context.Currencies.Any(c => c.Legend == dto.Legend && c.UserId == userId))
-                throw new Exception("Currency already exists for this user.");
-
-            _context.Currencies.Add(new Currency
+            var currency = new Currency
             {
-                Legend = dto.Legend,
                 Symbol = dto.Symbol,
+                Legend = dto.Legend,
                 IC = dto.IC,
-                UserId = userId
-            });
+                UserId = dto.userId,
+                IsDefault = false
+            };
 
+            _context.Currencies.Add(currency);
             _context.SaveChanges();
         }
 
@@ -132,82 +132,68 @@ namespace CurrencyConvert.Services.Implementations
         }
 
 
-        public void AddToFavorites(int userId, int currencyId)
+        public void MarkCurrencyAsFavorite(MarkFavoriteDto dto, int userId)
         {
-            // Verificar que la moneda existe
-            if (!_context.Currencies.Any(c => c.CurrencyId == currencyId))
+            var existingFavorite = _context.FavoriteCurrencies
+                .FirstOrDefault(fc => fc.CurrencyId == dto.CurrencyId && fc.UserId == userId);
+
+            if (existingFavorite == null)
             {
-                throw new Exception("Currency not found.");
+                var favorite = new FavoriteCurrency
+                {
+                    CurrencyId = dto.CurrencyId,
+                    UserId = userId
+                };
+                _context.FavoriteCurrencies.Add(favorite);
+            }
+            else
+            {
+                // Ya está marcado como favorito
+                throw new Exception("Currency is already marked as favorite.");
             }
 
-            // Verificar que no esté ya marcada como favorita
-            if (_context.FavoriteCurrencies.Any(f => f.UserId == userId && f.CurrencyId == currencyId))
-            {
-                throw new Exception("Currency already marked as favorite.");
-            }
-
-            var favoriteCurrency = new FavoriteCurrency
-            {
-                UserId = userId,
-                CurrencyId = currencyId
-            };
-
-            _context.FavoriteCurrencies.Add(favoriteCurrency);
             _context.SaveChanges();
         }
 
 
-        public void RemoveFromFavorites(int userId, int currencyId)
+
+        public void RemoveCurrencyFromFavorites(MarkFavoriteDto dto, int userId)
         {
             var favorite = _context.FavoriteCurrencies
-                .FirstOrDefault(f => f.UserId == userId && f.CurrencyId == currencyId);
+                .FirstOrDefault(fc => fc.CurrencyId == dto.CurrencyId && fc.UserId == userId);
 
-            if (favorite == null)
+            if (favorite != null)
             {
-                throw new Exception("Favorite currency not found.");
+                _context.FavoriteCurrencies.Remove(favorite);
+                _context.SaveChanges();
             }
-
-            _context.FavoriteCurrencies.Remove(favorite);
-            _context.SaveChanges();
+            else
+            {
+                throw new Exception("Currency is not marked as favorite.");
+            }
         }
-
 
         public List<CurrencyDto> GetUserCurrenciesWithFavorites(int userId)
         {
-            // Obtener el usuario junto con sus monedas
-            var user = _context.Users
-                .Include(u => u.Currencies) // Incluye las monedas asociadas
-                .FirstOrDefault(u => u.UserId == userId);
-
-            // Verifica si el usuario existe
-            if (user == null)
-            {
-                throw new Exception("User not found.");
-            }
-
-            // Obtener los IDs de las monedas favoritas del usuario
+            // Trae solo las monedas favoritas para el usuario
             var favoriteCurrencyIds = _context.FavoriteCurrencies
                 .Where(f => f.UserId == userId)
                 .Select(f => f.CurrencyId)
                 .ToList();
 
-            // Crear el DTO con las monedas y marcar las favoritas
-            var currencyDtos = user.Currencies.Select(c => new CurrencyDto
+            var favoriteCurrencies = _context.Currencies
+                .Where(c => favoriteCurrencyIds.Contains(c.CurrencyId)) // Filtra solo las monedas que son favoritas
+                .ToList();
+
+            // Convierte las monedas favoritas en CurrencyDto
+            return favoriteCurrencies.Select(c => new CurrencyDto
             {
                 CurrencyId = c.CurrencyId,
                 Legend = c.Legend,
                 Symbol = c.Symbol,
                 IC = c.IC,
-                IsFavorite = favoriteCurrencyIds.Contains(c.CurrencyId) // Marca como favorita si está en la lista
+                IsFavorite = true // Ya son todas favoritas, no es necesario verificar si está en la lista
             }).ToList();
-
-            // Agrega depuración aquí para verificar que los DTOs son correctos
-            foreach (var currency in currencyDtos)
-            {
-                Console.WriteLine($"CurrencyId: {currency.CurrencyId}, IsFavorite: {currency.IsFavorite}");
-            }
-
-            return currencyDtos;
         }
 
 

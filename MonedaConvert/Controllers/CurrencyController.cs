@@ -40,7 +40,14 @@ namespace CurrencyConvert.Controllers
         {
             try
             {
-                var userId = int.Parse(HttpContext.User.Claims.First(c => c.Type.Contains("nameidentifier")).Value);
+                // Obtenemos el userId directamente del token
+                var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type.Contains("nameidentifier"));
+
+                // Verificamos si se encuentra el userId en el claim
+                if (userIdClaim == null)
+                    return Unauthorized("No se pudo encontrar el ID de usuario en el token.");
+
+                var userId = int.Parse(userIdClaim.Value);
                 var userCurrencies = _currencyService.GetUserCurrencies(userId);
                 return Ok(userCurrencies);
             }
@@ -68,7 +75,6 @@ namespace CurrencyConvert.Controllers
                 return BadRequest($"Error: {ex.Message}");
             }
         }
-
         [HttpGet("favorites")]
         public IActionResult GetFavoriteCurrencies()
         {
@@ -83,6 +89,7 @@ namespace CurrencyConvert.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
 
 
         [HttpGet("default")]
@@ -145,24 +152,21 @@ namespace CurrencyConvert.Controllers
 
             return Ok(new
             {
-                RemainingConversions = user.Attempts 
+                RemainingConversions = user.Attempts
             });
         }
-
-
 
         [HttpPost("create")]
         public IActionResult CreateCurrency([FromBody] CreateAndUpdateCurrencyDto dto)
         {
             try
             {
-                int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))!.Value);
-                _currencyService.CreateCurrency(userId, dto);
+                _currencyService.CreateCurrency(dto);
                 return Ok("Currency created successfully.");
             }
             catch (Exception ex)
             {
-                return BadRequest($"Error creating currency: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
@@ -195,35 +199,36 @@ namespace CurrencyConvert.Controllers
         }
 
         [HttpPost("addFavorite")]
-        public IActionResult AddToFavorites([FromBody] MarkFavoriteDto dto)
+        public IActionResult MarkFavorite([FromBody] MarkFavoriteDto dto)
         {
             try
             {
+                // Obtiene el userId directamente desde los claims del token
                 var userId = int.Parse(HttpContext.User.Claims.First(c => c.Type.Contains("nameidentifier")).Value);
-                _currencyService.AddToFavorites(userId, dto.CurrencyId);
-                return Ok("Currency added to favorites.");
+                _currencyService.MarkCurrencyAsFavorite(dto, userId);
+                return Ok("Currency marked as favorite.");
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(ex.Message);
             }
         }
 
-
         [HttpDelete("favorites/{currencyId}")]
-        public IActionResult RemoveFromFavorites(int currencyId)
+        public IActionResult RemoveFavorite(int currencyId) // Ya que el currencyId es un parámetro en la ruta, no lo necesitamos en el cuerpo
         {
             try
             {
+                // Obtiene el userId directamente desde los claims del token
                 var userId = int.Parse(HttpContext.User.Claims.First(c => c.Type.Contains("nameidentifier")).Value);
-                _currencyService.RemoveFromFavorites(userId, currencyId);
+                var dto = new MarkFavoriteDto { CurrencyId = currencyId }; // Crea el DTO para pasarlo al servicio
+                _currencyService.RemoveCurrencyFromFavorites(dto, userId);
                 return Ok("Currency removed from favorites.");
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(ex.Message);
             }
         }
-
     }
-}
+ }

@@ -33,23 +33,47 @@ public class UserService
    public void Create(CreateAndUpdateUserDto dto)
 {
     if (_context.Users.Any(u => u.Email == dto.Email))
-        throw new InvalidOperationException("Email already in use.");
+        throw new InvalidOperationException("El email ya está en uso.");
 
     var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
-    var subscription = _context.Subscriptions.Find(dto.SubscriptionId) ?? throw new InvalidOperationException("Invalid subscription ID.");
+    var subscription = _context.Subscriptions.Find(dto.SubscriptionId) 
+                       ?? throw new InvalidOperationException("ID de suscripción inválido.");
 
     var user = new User
     {
         Email = dto.Email,
         Password = hashedPassword,
         SubscriptionId = subscription.SubId,
-        Attempts = subscription.Conversions, 
+        Attempts = subscription.Conversions,
         Currencies = new List<Currency>(),  
         FavoriteCurrencies = new List<FavoriteCurrency>() 
     };
 
     _context.Users.Add(user);
+    _context.SaveChanges();
+
+    // Asignar monedas por defecto al usuario recién creado.
+    AssignDefaultCurrenciesToUser(user.UserId);
+}
+
+private void AssignDefaultCurrenciesToUser(int userId)
+{
+    var defaultCurrencies = _context.Currencies.Where(c => c.IsDefault).ToList();
+
+    foreach (var currency in defaultCurrencies)
+    {
+        var userCurrency = new Currency
+        {
+            Legend = currency.Legend,
+            Symbol = currency.Symbol,
+            IC = currency.IC,
+            IsDefault = true,
+            UserId = userId
+        };
+        _context.Currencies.Add(userCurrency);
+    }
+
     _context.SaveChanges();
 }
 

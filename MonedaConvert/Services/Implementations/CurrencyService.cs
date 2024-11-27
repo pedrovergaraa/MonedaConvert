@@ -91,14 +91,14 @@ namespace CurrencyConvert.Services.Implementations
 
 
 
-        public void CreateCurrency(CreateAndUpdateCurrencyDto dto)
+        public void CreateCurrency(int loggedUserId, CreateAndUpdateCurrencyDto dto)
         {
             var currency = new Currency
             {
                 Symbol = dto.Symbol,
                 Legend = dto.Legend,
                 IC = dto.IC,
-                UserId = dto.userId,
+                UserId = loggedUserId,
                 IsDefault = false
             };
 

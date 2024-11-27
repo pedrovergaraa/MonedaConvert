@@ -156,22 +156,18 @@ namespace CurrencyConvert.Controllers
             });
         }
         [HttpPost("create")]
-        public IActionResult CreateCurrency([FromBody] CreateAndUpdateCurrencyDto dto)
+        public IActionResult CreateCurrency(CreateAndUpdateCurrencyDto dto)
         {
+            int userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))!.Value);
+
             try
             {
-                // Verificar si el modelo es válido
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest("Invalid data.");
-                }
-
-                _currencyService.CreateCurrency(dto);
+                _currencyService.CreateCurrency(userId, dto);
                 return Ok("Currency created successfully.");
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest($"Error creating currency: {ex.Message}");
             }
         }
 

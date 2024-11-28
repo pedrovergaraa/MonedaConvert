@@ -17,23 +17,32 @@ public class SubscriptionService
         return _context.Subscriptions.AsNoTracking().ToList();
     }
 
-    public Subscription GetUserSubscription(int userId)
+    public UserSubscriptionDto GetUserSubscription(int userId)
     {
-        if (userId <= 0)
-        {
-            throw new Exception("Invalid userId.");
-        }
-
+        // Busca al usuario por su ID e incluye la relación con Subscription
         var user = _context.Users
             .Include(u => u.Subscription)
             .FirstOrDefault(u => u.UserId == userId);
 
-        if (user?.Subscription == null)
+        // Verifica si el usuario existe
+        if (user == null)
         {
-            throw new Exception("User or subscription not found.");
+            throw new KeyNotFoundException($"No se encontró un usuario con el ID {userId}.");
         }
 
-        return user.Subscription;
+        // Verifica si el usuario tiene una suscripción
+        if (user.Subscription == null)
+        {
+            throw new InvalidOperationException($"El usuario con el ID {userId} no tiene una suscripción activa.");
+        }
+
+        // Mapea la suscripción al DTO
+        return new UserSubscriptionDto
+        {
+            Name = user.Subscription.Name,
+            Conversions = user.Subscription.Conversions,
+            Price = user.Subscription.Price
+        };
     }
 
     public void UpdateUserSubscription(int userId, ActivateSubscriptionDto dto)

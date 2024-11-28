@@ -16,9 +16,9 @@ namespace CurrencyConvert.Data
         {
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Subscription)
-                .WithMany(s => s.Users)
-                .HasForeignKey(u => u.SubscriptionId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .WithMany()
+                .HasForeignKey(u => u.SubscriptionId);
+
 
             modelBuilder.Entity<Currency>()
                 .HasOne(c => c.User)

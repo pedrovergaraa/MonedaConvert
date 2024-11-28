@@ -34,9 +34,17 @@ public class SubscriptionController : ControllerBase
     [HttpGet("userSub/{userId}")]
     public IActionResult GetUserSubscription(int userId)
     {
-        var subscription = _subscriptionService.GetUserSubscription(userId);
-        return Ok(subscription);
+        try
+        {
+            var subscription = _subscriptionService.GetUserSubscription(userId);
+            return Ok(subscription);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(ex.Message); // Si algo sale mal, responde con Unauthorized
+        }
     }
+
 
 
     [HttpPut("update")]

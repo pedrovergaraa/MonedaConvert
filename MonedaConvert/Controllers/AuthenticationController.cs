@@ -26,7 +26,6 @@ namespace CurrencyConvert.Controllers
         {
             try
             {
-
                 var user = _userService.ValidateUser(authenticationRequestBody);
                 if (user is null)
                     return Unauthorized();
@@ -35,10 +34,10 @@ namespace CurrencyConvert.Controllers
                 var credentials = new SigningCredentials(securityPassword, SecurityAlgorithms.HmacSha256);
 
                 var claimsForToken = new List<Claim>
-                {
-                    new Claim("sub", user.UserId.ToString()),
-                    new Claim("Email", user.Email)
-                };
+        {
+            new Claim("sub", user.UserId.ToString()),
+            new Claim("Email", user.Email)
+        };
 
                 var jwtSecurityToken = new JwtSecurityToken(
                     _config["Authentication:Issuer"],
@@ -49,13 +48,17 @@ namespace CurrencyConvert.Controllers
 
                 var tokenToReturn = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
 
-                return Ok(new { token = tokenToReturn });
+                // Incluye el userId en la respuesta
+                return Ok(new
+                {
+                    token = tokenToReturn,
+                    userId = user.UserId
+                });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error interno: {ex.Message}");
             }
         }
-
     }
-}
+    }

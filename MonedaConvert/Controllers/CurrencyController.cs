@@ -125,7 +125,6 @@ namespace CurrencyConvert.Controllers
                 return BadRequest($"Error: {ex.Message}");
             }
         }
-
         [HttpPost("convert")]
         public IActionResult ConvertCurrency([FromBody] ConversionDto dto)
         {
@@ -133,13 +132,26 @@ namespace CurrencyConvert.Controllers
             {
                 var userId = int.Parse(HttpContext.User.Claims.First(c => c.Type.Contains("nameidentifier")).Value);
                 var result = _currencyService.ConvertCurrency(userId, dto.FromCurrencyId, dto.ToCurrencyId, dto.Amount);
-                return Ok(new { ConvertedAmount = result });
+
+                // Obtener los intentos restantes después de la conversión
+                var user = _context.Users.Include(u => u.Subscription).FirstOrDefault(u => u.UserId == userId);
+                if (user == null)
+                {
+                    throw new Exception("User not found.");
+                }
+
+                return Ok(new
+                {
+                    ConvertedAmount = result,
+                    RemainingAttempts = user.Attempts  // Devolver los intentos restantes
+                });
             }
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
+
 
         [HttpGet("remaining-conversions/{userId}")]
         public IActionResult GetRemainingConversions(int userId)
@@ -155,6 +167,7 @@ namespace CurrencyConvert.Controllers
                 RemainingConversions = user.Attempts
             });
         }
+
         [HttpPost("create")]
         public IActionResult CreateCurrency(CreateAndUpdateCurrencyDto dto)
         {

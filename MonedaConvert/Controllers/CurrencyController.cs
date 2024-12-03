@@ -146,7 +146,6 @@ namespace CurrencyConvert.Controllers
         public IActionResult GetRemainingConversions(int userId)
         {
             var user = _context.Users.Include(u => u.Subscription).FirstOrDefault(u => u.UserId == userId);
-            if (user == null || user.Subscription == null)
             {
                 return NotFound("User or subscription not found.");
             }

@@ -22,19 +22,7 @@ namespace CurrencyConvert.Controllers
             _context = context;
         }
 
-        [HttpGet("all")]
-        public IActionResult GetAllCurrencies()
-        {
-            try
-            {
-                var currencies = _currencyService.GetAllCurrencies();
-                return Ok(currencies);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Error: {ex.Message}");
-            }
-        }
+        
         [HttpGet("user")]
         public IActionResult GetUserCurrencies()
         {
@@ -75,6 +63,7 @@ namespace CurrencyConvert.Controllers
                 return BadRequest($"Error: {ex.Message}");
             }
         }
+
         [HttpGet("favorites")]
         public IActionResult GetFavoriteCurrencies()
         {

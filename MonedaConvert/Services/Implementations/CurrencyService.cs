@@ -23,27 +23,39 @@ namespace CurrencyConvert.Services.Implementations
 
         public List<Currency> GetDefaultCurrencies()
         {
-                return _context.Currencies
-        .Where(c => c.UserId == 0 || c.UserId == null)
-        .ToList();
-
-
+            // Solo obtenemos las monedas por defecto si no están asociadas a un usuario.
+            return _context.Currencies
+                .Where(c => c.UserId == 0 || c.UserId == null)
+                .ToList();
         }
+
         public List<CurrencyDto> GetUserCurrencies(int userId)
         {
-            var currencies = _context.Currencies
-                .Where(c => c.UserId == userId || c.IsDefault)  
-                .Select(c => new CurrencyDto
-                {
-                    CurrencyId = c.CurrencyId,
-                    Legend = c.Legend,
-                    Symbol = c.Symbol,
-                    IC = c.IC,
-                    IsFavorite = _context.FavoriteCurrencies.Any(fc => fc.CurrencyId == c.CurrencyId && fc.UserId == userId)
-                }).ToList();
+            // Obtenemos las monedas por defecto y las monedas específicas del usuario
+            var defaultCurrencies = _context.Currencies
+                .Where(c => c.UserId == 0 || c.UserId == null) // Monedas por defecto
+                .ToList();
 
-            return currencies;
+            var userCurrencies = _context.Currencies
+                .Where(c => c.UserId == userId) // Monedas creadas por el usuario
+                .ToList();
+
+            // Combinamos las monedas, asegurando que no haya duplicados
+            var allCurrencies = defaultCurrencies.Concat(userCurrencies)
+                .GroupBy(c => c.CurrencyId)
+                .Select(g => g.First()) // Selecciona solo la primera instancia de cada moneda
+                .ToList();
+
+            return allCurrencies.Select(c => new CurrencyDto
+            {
+                CurrencyId = c.CurrencyId,
+                Legend = c.Legend,
+                Symbol = c.Symbol,
+                IC = c.IC,
+                IsFavorite = _context.FavoriteCurrencies.Any(fc => fc.CurrencyId == c.CurrencyId && fc.UserId == userId)
+            }).ToList();
         }
+
 
 
 

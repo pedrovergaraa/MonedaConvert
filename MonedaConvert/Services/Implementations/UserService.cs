@@ -30,54 +30,64 @@ public class UserService
         return user;
     }
 
-   public void Create(CreateAndUpdateUserDto dto)
-{
-    if (_context.Users.Any(u => u.Email == dto.Email))
-        throw new InvalidOperationException("El email ya está en uso.");
-
-    var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-
-    var subscription = _context.Subscriptions.Find(dto.SubscriptionId) 
-                       ?? throw new InvalidOperationException("ID de suscripción inválido.");
-
-    var user = new User
-    {
-        Email = dto.Email,
-        Password = hashedPassword,
-        SubscriptionId = subscription.SubId,
-        Attempts = subscription.Conversions,
-        Currencies = new List<Currency>(),  
-        FavoriteCurrencies = new List<FavoriteCurrency>() 
-    };
-
-    _context.Users.Add(user);
-    _context.SaveChanges();
-
-    // Asignar monedas por defecto al usuario recién creado.
-    AssignDefaultCurrenciesToUser(user.UserId);
-}
-
-private void AssignDefaultCurrenciesToUser(int userId)
-{
-    var defaultCurrencies = _context.Currencies.Where(c => c.IsDefault).ToList();
-
-    foreach (var currency in defaultCurrencies)
-    {
-        var userCurrency = new Currency
+        public void Create(CreateAndUpdateUserDto dto)
         {
-            Legend = currency.Legend,
-            Symbol = currency.Symbol,
-            IC = currency.IC,
-            IsDefault = true,
-            UserId = userId
-        };
-        _context.Currencies.Add(userCurrency);
-    }
+            if (_context.Users.Any(u => u.Email == dto.Email))
+                throw new InvalidOperationException("El email ya está en uso.");
 
-    _context.SaveChanges();
-}
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
-    public User GetUserById(int userId)
+            var subscription = _context.Subscriptions.Find(dto.SubscriptionId)
+                               ?? throw new InvalidOperationException("ID de suscripción inválido.");
+
+            var user = new User
+            {
+                Email = dto.Email,
+                Password = hashedPassword,
+                SubscriptionId = subscription.SubId,
+                Attempts = subscription.Conversions,
+                Currencies = new List<Currency>(),
+                FavoriteCurrencies = new List<FavoriteCurrency>()
+            };
+
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
+            // Asignar monedas por defecto al usuario recién creado, solo si no están ya asignadas
+            AssignDefaultCurrenciesToUser(user.UserId);
+        }
+
+
+        private void AssignDefaultCurrenciesToUser(int userId)
+        {
+            // Obtener las monedas por defecto
+            var defaultCurrencies = _context.Currencies.Where(c => c.IsDefault).ToList();
+
+            foreach (var currency in defaultCurrencies)
+            {
+                // Verificar si el usuario ya tiene esta moneda asignada
+                bool userHasCurrency = _context.Currencies.Any(c => c.UserId == userId && c.Symbol == currency.Symbol);
+
+                if (!userHasCurrency)
+                {
+                    // Si el usuario no tiene esta moneda, agregarla
+                    var userCurrency = new Currency
+                    {
+                        Legend = currency.Legend,
+                        Symbol = currency.Symbol,
+                        IC = currency.IC,
+                        IsDefault = true,
+                        UserId = userId
+                    };
+                    _context.Currencies.Add(userCurrency);
+                }
+            }
+
+            // Guardar los cambios
+            _context.SaveChanges();
+        }
+
+        public User GetUserById(int userId)
     {
         return _context.Users
             .Include(u => u.Currencies)

@@ -46,6 +46,7 @@ namespace CurrencyConvert.Data
                     Symbol = "$",
                     IC = 0.005f,
                     IsDefault = true,
+                    UserId = null
                 };
                 Currency USDollar = new Currency()
                 {
@@ -54,6 +55,7 @@ namespace CurrencyConvert.Data
                     Symbol = "$",
                     IC = 1f,
                     IsDefault = true,
+                    UserId = null
                 };
                 Currency euro = new Currency()
                 {
@@ -62,6 +64,7 @@ namespace CurrencyConvert.Data
                     Symbol = "€",
                     IC = 1.1f,
                     IsDefault = true,
+                    UserId = null
                 };
                 Currency britishPound = new Currency()
                 {
@@ -70,6 +73,7 @@ namespace CurrencyConvert.Data
                     Symbol = "£",
                     IC = 1.3f,
                     IsDefault = true,
+                    UserId = null
                 };
                 Currency japaneseYen = new Currency()
                 {
@@ -78,6 +82,7 @@ namespace CurrencyConvert.Data
                     Symbol = "¥",
                     IC = 0.007f,
                     IsDefault = true,
+                    UserId = null
                 };
                 Currency canadianDollar = new Currency()
                 {
@@ -86,6 +91,7 @@ namespace CurrencyConvert.Data
                     Symbol = "$",
                     IC = 0.75f,
                     IsDefault = true,
+                    UserId = null
                 };
                 Currency australianDollar = new Currency()
                 {
@@ -94,6 +100,7 @@ namespace CurrencyConvert.Data
                     Symbol = "$",
                     IC = 0.72f,
                     IsDefault = true,
+                    UserId = null
                 };
                 Currency swissFranc = new Currency()
                 {
@@ -102,6 +109,7 @@ namespace CurrencyConvert.Data
                     Symbol = "$",
                     IC = 1.05f,
                     IsDefault = true,
+                    UserId = null
                 };
 
 

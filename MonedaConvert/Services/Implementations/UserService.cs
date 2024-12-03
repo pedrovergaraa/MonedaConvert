@@ -53,39 +53,36 @@ public class UserService
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            // Asignar monedas por defecto al usuario recién creado, solo si no están ya asignadas
+            // Asignar monedas por defecto al usuario recién creado
             AssignDefaultCurrenciesToUser(user.UserId);
         }
 
 
         private void AssignDefaultCurrenciesToUser(int userId)
         {
-            // Obtener las monedas por defecto
-            var defaultCurrencies = _context.Currencies.Where(c => c.IsDefault).ToList();
+            // Obtener monedas por defecto globales (sin usuario asociado)
+            var defaultCurrencies = _context.Currencies
+                .Where(c => c.IsDefault && (c.UserId == null || c.UserId == 0))
+                .ToList();
 
             foreach (var currency in defaultCurrencies)
             {
-                // Verificar si el usuario ya tiene esta moneda asignada
-                bool userHasCurrency = _context.Currencies.Any(c => c.UserId == userId && c.Symbol == currency.Symbol);
-
-                if (!userHasCurrency)
+                // Asociar moneda existente con el usuario
+                var userCurrency = new Currency
                 {
-                    // Si el usuario no tiene esta moneda, agregarla
-                    var userCurrency = new Currency
-                    {
-                        Legend = currency.Legend,
-                        Symbol = currency.Symbol,
-                        IC = currency.IC,
-                        IsDefault = true,
-                        UserId = userId
-                    };
-                    _context.Currencies.Add(userCurrency);
-                }
+                    Legend = currency.Legend,
+                    Symbol = currency.Symbol,
+                    IC = currency.IC,
+                    IsDefault = true,
+                    UserId = userId // Asociar al usuario
+                };
+
+                _context.Currencies.Add(userCurrency);
             }
 
-            // Guardar los cambios
             _context.SaveChanges();
         }
+
 
         public User GetUserById(int userId)
     {
